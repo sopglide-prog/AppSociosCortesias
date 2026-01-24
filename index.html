@@ -637,8 +637,25 @@
             if (error) return null;
             return data;
         }
+        function getDeviceInfo() {
+            const ua = navigator.userAgent;
+            let brand = "Desconocido";
+            let model = "Desconocido";
+
+            if (/iPhone/.test(ua)) brand = "Apple", model = "iPhone";
+            else if (/iPad/.test(ua)) brand = "Apple", model = "iPad";
+            else if (/Android/.test(ua)) {
+                brand = "Android";
+                const match = ua.match(/Android.*; (.*) Build/);
+                if (match && match[1]) model = match[1].trim();
+            }
+
+            return { brand, model };
+        }
 
         async function registerDeviceForUser(deviceId, userId, userName) {
+            const { brand, model } = getDeviceInfo();
+
             try {
                 await supabaseClient
                     .from('usuarios_dispositivos')
@@ -646,12 +663,15 @@
                         usuario_id: userId,
                         usuario_nombre: userName,
                         dispositivo_id: deviceId,
+                        marca: brand,
+                        modelo: model,
                         ultimo_acceso: new Date().toISOString()
                     }, { onConflict: ['dispositivo_id'] });
             } catch (err) {
                 console.error('Error registrando dispositivo:', err);
             }
         }
+
 
            async function loginUser(userId, userName) {
                const overlay = document.getElementById('authOverlay');
