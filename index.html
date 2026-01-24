@@ -430,6 +430,25 @@
             transform: translateX(-50%) translateY(0) scale(1);
             opacity: 1;
         }
+        #productsView {
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        @media (max-width: 480px) {
+            header.sticky {
+                padding-top: 1.5rem !important;
+                padding-bottom: 0.75rem !important;
+            }
+        }
+        /* Evita que el teclado tape los productos */
+        body.searching #productsView {
+            padding-bottom: 65vh; /* espacio para el teclado */
+        }
+
+        body.searching #cartBar {
+            display: none; /* ocultamos el checkout mientras se busca */
+        }
 
     </style>
 </head>
@@ -510,8 +529,10 @@
 
     <!-- VIEW 2: PRODUCT SELECTION -->
     <div id="productsView" class="view-hidden min-h-screen pb-32">
-        <header class="sticky top-0 z-50 px-6 pt-14 pb-6 glass border-none">
-            <div class="flex items-center justify-between mb-8">
+        <header class="sticky top-0 z-50 px-6 pt-8 pb-4 glass border-none">
+
+            <div class="flex items-center justify-between mb-5">
+
                 <button onclick="showUsersView()" class="w-10 h-10 rounded-full glass flex items-center justify-center active:scale-90 transition-transform">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
                 </button>
@@ -529,13 +550,42 @@
                 <button onclick="loadUserReservations()" id="tabHistory" class="px-5 py-2.5 glass rounded-full text-xs text-gray-300 font-semibold whitespace-nowrap">Mis Reservas</button>
             </div>
         </header>
-
         <!-- Content Area -->
         <div id="productsContent">
+
+            <!-- SEARCH BAR -->
+            <div class="px-6 mt-4 mb-6">
+                <div class="relative">
+                    <input
+                        id="productSearch"
+                        type="text"
+                        placeholder="Buscar bebida, marca o inicial..."
+                        oninput="filterProducts()"
+                        onfocus="handleSearchFocus()"
+                        onblur="handleSearchBlur()"
+                        class="w-full pl-12 pr-4 py-4 rounded-2xl bg-zinc-900/80 backdrop-blur
+                               text-white text-sm tracking-wide outline-none
+                               border border-white/10 focus:border-indigo-500
+                               placeholder-gray-500 transition-all duration-200"
+                    />
+
+                    <!-- ICON -->
+                    <svg class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                         width="18" height="18" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="M21 21l-4.3-4.3"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- PRODUCTS GRID -->
             <div class="product-grid" id="productGrid">
                 <!-- Products injected here -->
             </div>
+
         </div>
+
 
         <div id="historyContent" class="view-hidden p-6 space-y-4">
             <p class="text-center text-gray-500 text-sm py-10" id="historyLoader">Cargando tu historial...</p>
@@ -881,21 +931,87 @@
                 </div>
             `).join('');
         }
-
-        function renderProducts() {
+        function renderProducts(products = allProducts) {
             const grid = document.getElementById('productGrid');
-            grid.innerHTML = allProducts.map(p => `
-                <div id="product-${p.id}" onclick="toggleProduct(${p.id})" class="product-card-pro bg-zinc-900 ${selectedItems.has(p.id) ? 'selected' : ''}">
-                    <div class="selection-indicator">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+
+            if (!products || products.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center text-gray-400 py-16">
+                        <div class="text-3xl mb-3">🍸</div>
+                        <p class="text-sm">No se encontraron productos</p>
                     </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = products.map(p => `
+                <div id="product-${p.id}"
+                    onclick="toggleProduct(${p.id})"
+                    class="product-card-pro bg-zinc-900 ${selectedItems.has(p.id) ? 'selected' : ''}">
+
+                    <div class="selection-indicator">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                            stroke="white" stroke-width="4">
+                            <path d="M20 6L9 17l-5-5"/>
+                        </svg>
+                    </div>
+
                     <img src="${p.imagen}" alt="${p.nombre}" loading="lazy">
+
                     <div class="absolute bottom-4 left-4 right-4 z-10">
-                        <h3 class="text-xs font-bold truncate text-white uppercase tracking-wider">${p.nombre}</h3>
+                        <h3 class="text-xs font-bold truncate text-white uppercase tracking-wider">
+                            ${p.nombre}
+                        </h3>
                     </div>
                 </div>
             `).join('');
         }
+        function filterProducts() {
+            const input = document.getElementById('productSearch');
+            if (!input) return;
+
+            const query = input.value.toLowerCase().trim();
+
+            const list = query === ''
+                ? allProducts
+                : allProducts.filter(p => p.nombre.toLowerCase().includes(query));
+
+            renderProducts(list);
+
+            // 👇 asegura visibilidad del grid
+            const container = document.getElementById('productsView');
+            const grid = document.getElementById('productGrid');
+
+            if (container && grid) {
+                container.scrollTo({
+                    top: grid.offsetTop - 20,
+                    behavior: 'smooth'
+                });
+            }
+        }
+
+        function handleSearchFocus() {
+            document.body.classList.add('searching');
+
+            setTimeout(() => {
+                const container = document.getElementById('productsView');
+                const grid = document.getElementById('productGrid');
+
+                if (!container || !grid) return;
+
+                container.scrollTo({
+                    top: grid.offsetTop - 20,
+                    behavior: 'smooth'
+                });
+            }, 300);
+        }
+
+
+        function handleSearchBlur() {
+            document.body.classList.remove('searching');
+        }
+
+
 
         function renderWaiters() {
             const grid = document.getElementById('waiterGrid');
