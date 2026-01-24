@@ -653,117 +653,94 @@
             }
         }
 
-            async function loginUser(userId, userName) {
-                const overlay = document.getElementById('authOverlay');
-                const authName = document.getElementById('authUserName');
-                const deviceId = getDeviceId(); // ID único del dispositivo
-                const registeredUser = await getDeviceUser(deviceId);
+           async function loginUser(userId, userName) {
+               const overlay = document.getElementById('authOverlay');
+               const authName = document.getElementById('authUserName');
+               const deviceId = getDeviceId(); // ID único del dispositivo
+               const registeredUser = await getDeviceUser(deviceId);
 
-                if (registeredUser) {
-                    if (registeredUser.usuario_id !== userId) {
-                        // Mostrar: usuario que intenta entrar (userName) no puede usar el dispositivo de registeredUser
-                        showErrorToast(`${registeredUser.usuario_nombre}, tú no eres ${userName}`);
+               // Si el dispositivo ya está registrado por otro usuario
+               if (registeredUser && registeredUser.usuario_id !== userId) {
+                   showErrorToast(`${registeredUser.usuario_nombre}, tú no eres ${userName}`);
+                   return;
+               }
 
-                        return;
-                    }
+               // Mostrar overlay con mensaje de bienvenida antes de Face ID
+               authName.textContent = `Hola, ${userName}. Autentícate con Face ID`;
+               overlay.classList.add('active');
+               await new Promise(r => setTimeout(r, 1200));
 
-                } else {
-                    // Si el dispositivo no está registrado, registrarlo automáticamente
-                    await registerDeviceForUser(deviceId, userId, userName);
-                }
+               // Si el navegador no soporta WebAuthn
+               if (!window.PublicKeyCredential) {
+                   // Aquí podrías decidir si registrar el dispositivo directamente
+                   completeLogin(userId, userName);
+                   return;
+               }
 
-                // Mostrar overlay con mensaje de bienvenida antes de Face ID
-                authName.textContent = `Hola, ${userName}. Autentícate con Face ID`;
-                overlay.classList.add('active');
+               try {
+                   const storedCredential = await getUserCredential(userId);
 
-                await new Promise(r => setTimeout(r, 1200));
+                   let credential;
 
-                if (!window.PublicKeyCredential) {
-                    completeLogin(userId, userName);
-                    return;
-                }
+                   if (storedCredential) {
+                       // Face ID existente
+                       const challenge = new Uint8Array(32);
+                       window.crypto.getRandomValues(challenge);
 
-                try {
-                    const storedCredential = await getUserCredential(userId);
+                       await navigator.credentials.get({
+                           publicKey: {
+                               challenge,
+                               allowCredentials: [{
+                                   id: Uint8Array.from(atob(storedCredential.credential_id), c => c.charCodeAt(0)),
+                                   type: "public-key"
+                               }],
+                               userVerification: "required",
+                               timeout: 60000
+                           }
+                       });
 
-                    if (storedCredential) {
-                        // Face ID existente
-                        const challenge = new Uint8Array(32);
-                        window.crypto.getRandomValues(challenge);
+                   } else {
+                       // Crear nueva credencial si no hay existente
+                       const challenge = new Uint8Array(32);
+                       window.crypto.getRandomValues(challenge);
 
-                        await navigator.credentials.get({
-                            publicKey: {
-                                challenge,
-                                allowCredentials: [{
-                                    id: Uint8Array.from(atob(storedCredential.credential_id), c => c.charCodeAt(0)),
-                                    type: "public-key"
-                                }],
-                                userVerification: "required",
-                                timeout: 60000
-                            }
-                        });
+                       credential = await navigator.credentials.create({
+                           publicKey: {
+                               challenge,
+                               rp: { name: "Pacha Sunset" },
+                               user: {
+                                   id: new TextEncoder().encode(userId.toString()),
+                                   name: userName,
+                                   displayName: userName
+                               },
+                               pubKeyCredParams: [{ type: "public-key", alg: -7 }],
+                               authenticatorSelection: {
+                                   authenticatorAttachment: "platform",
+                                   userVerification: "required"
+                               },
+                               timeout: 60000,
+                               attestation: "direct"
+                           }
+                       });
 
-                        completeLogin(userId, userName);
-                        return;
-                    }
+                       await supabaseClient.from('credenciales_biometricas').insert({
+                           usuario_id: userId,
+                           credential_id: btoa(String.fromCharCode(...new Uint8Array(credential.rawId))),
+                           public_key: JSON.stringify(credential.response)
+                       });
+                   }
 
-                    // Crear nueva credencial si no hay existente
-                    const challenge = new Uint8Array(32);
-                    window.crypto.getRandomValues(challenge);
+                   // ✅ Solo ahora, después de que la biometría pasa:
+                   await registerDeviceForUser(deviceId, userId, userName);
 
-                    const credential = await navigator.credentials.create({
-                        publicKey: {
-                            challenge,
-                            rp: { name: "Pacha Sunset" },
-                            user: {
-                                id: new TextEncoder().encode(userId.toString()),
-                                name: userName,
-                                displayName: userName
-                            },
-                            pubKeyCredParams: [{ type: "public-key", alg: -7 }],
-                            authenticatorSelection: {
-                                authenticatorAttachment: "platform",
-                                userVerification: "required"
-                            },
-                            timeout: 60000,
-                            attestation: "direct"
-                        }
-                    });
+                   // Login completo
+                   completeLogin(userId, userName);
 
-                    await supabaseClient.from('credenciales_biometricas').insert({
-                        usuario_id: userId,
-                        credential_id: btoa(String.fromCharCode(...new Uint8Array(credential.rawId))),
-                        public_key: JSON.stringify(credential.response)
-                    });
-
-                    completeLogin(userId, userName);
-
-                } catch (err) {
-                    console.error('Error biométrico:', err);
-                    overlay.classList.remove('active'); // Oculta overlay
-                    showErrorToast(`Verificación biométrica fallida o cancelada`);
-                    return;
-                }
-            }
-
-           function showErrorToast(message = "Verificación biométrica fallida o cancelada") {
-               const toast = document.getElementById('errorToast');
-
-               // Actualizar mensaje dinámicamente
-               const h3 = toast.querySelector('h3');
-               const p = toast.querySelector('p');
-
-               h3.textContent = "¡Error!";
-               p.textContent = message;
-
-               // Mostrar toast con animación
-               toast.classList.add('active');
-               if (window.navigator.vibrate) window.navigator.vibrate([20, 40, 20]);
-
-               // Ocultar después de 3.5s
-               setTimeout(() => {
-                   toast.classList.remove('active');
-               }, 3500);
+               } catch (err) {
+                   console.error('Error biométrico:', err);
+                   overlay.classList.remove('active'); // Oculta overlay
+                   showErrorToast(`Verificación biométrica fallida o cancelada`);
+               }
            }
 
 
