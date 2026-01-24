@@ -388,6 +388,49 @@
                 -webkit-backdrop-filter: blur(15px);
             }
         }
+        #errorToast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            z-index: 300;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 40px;
+            border-radius: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        #errorToast {
+            position: fixed;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%) translateY(-20px) scale(0.95);
+            background: transparent;
+            text-align: center;
+            padding: 20px;
+            border-radius: 1rem;
+            color: white;
+            z-index: 9999;
+            opacity: 0;
+            transition: all 0.3s ease-in-out;
+        }
+
+        #errorToast.active {
+            transform: translateX(-50%) translateY(0) scale(1);
+            opacity: 1;
+        }
+
     </style>
 </head>
 <body>
@@ -402,6 +445,16 @@
         </div>
         <h3 class="text-2xl font-bold mb-2">¡Completado!</h3>
         <p class="text-gray-300 text-sm">Reserva guardada con éxito</p>
+    </div>
+    <!-- ERROR BIOMÉTRICO TOAST -->
+    <div id="errorToast">
+        <div class="success-circle" style="background: linear-gradient(135deg, #f87171, #ef4444);">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 6L6 18M6 6l12 12"/>
+            </svg>
+        </div>
+        <h3 class="text-2xl font-bold mb-2">¡Error!</h3>
+        <p class="text-gray-300 text-sm">Verificación biométrica fallida o cancelada</p>
     </div>
 
     <!-- AUTH OVERLAY -->
@@ -515,20 +568,35 @@
         let selectedItems = new Set();
         let allProducts = [];
         let selectedWaiter = null;
+        
+        async function getUserCredential(usuarioId) {
+            const { data, error } = await supabaseClient
+                .from('credenciales_biometricas')
+                .select('*')
+                .eq('usuario_id', usuarioId)
+                .single();
+
+            if (error) {
+                return null;
+            }
+
+            return data;
+        }
+
 
         const USERS = [
             { id: 1, name: "Luis Jeri", initial: "LJ" },
             { id: 2, name: "Leo Peter", initial: "LP" },
             { id: 3, name: "Horacio Arenas", initial: "HA" },
             { id: 4, name: "Diego Cardenas", initial: "DC" },
-            { id: 5, name: "Christopher", initial: "CH" }
+            { id: 5, name: "Chris", initial: "CH" }
         ];
 
         const WAITERS = [
-            { id: 1, name: "Mateo", initial: "M" },
-            { id: 2, name: "Sofia", initial: "S" },
-            { id: 3, name: "Lucas", initial: "L" },
-            { id: 4, name: "Valentina", initial: "V" }
+            { id: 1, name: "William", initial: "W" },
+            { id: 2, name: "Angelica", initial: "A" },
+            { id: 3, name: "Gabriel", initial: "G" },
+            { id: 4, name: "Joel", initial: "J" }
         ];
 
         async function loadProducts() {
@@ -542,47 +610,162 @@
                 renderProducts();
             }
         }
-
-        async function loginUser(userId, userName) {
-            const overlay = document.getElementById('authOverlay');
-            const authName = document.getElementById('authUserName');
-
-            authName.textContent = userName;
-            overlay.classList.add('active');
-
-            await new Promise(r => setTimeout(r, 1200));
-
-            if (!window.PublicKeyCredential) {
-                completeLogin(userId, userName);
-                return;
+        function showErrorToast() {
+            const toast = document.getElementById('errorToast');
+            toast.classList.add('active');
+            if (window.navigator.vibrate) window.navigator.vibrate([20, 40, 20]);
+            setTimeout(() => {
+                toast.classList.remove('active');
+            }, 3000);
+        }
+        function getDeviceId() {
+            let id = localStorage.getItem('device_id');
+            if (!id) {
+                id = crypto.randomUUID();
+                localStorage.setItem('device_id', id);
             }
+            return id;
+        }
 
+        async function getDeviceUser(deviceId) {
+            const { data, error } = await supabaseClient
+                .from('usuarios_dispositivos')
+                .select('*')
+                .eq('dispositivo_id', deviceId)
+                .single();
+
+            if (error) return null;
+            return data;
+        }
+
+        async function registerDeviceForUser(deviceId, userId, userName) {
             try {
-                const challenge = new Uint8Array(32);
-                window.crypto.getRandomValues(challenge);
-                const publicKey = {
-                    challenge,
-                    rp: { name: "Pacha Sunset" },
-                    user: {
-                        id: new TextEncoder().encode(userId.toString()),
-                        name: userName,
-                        displayName: userName
-                    },
-                    pubKeyCredParams: [{ type: "public-key", alg: -7 }],
-                    authenticatorSelection: { 
-                        authenticatorAttachment: "platform", 
-                        userVerification: "required" 
-                    },
-                    timeout: 60000,
-                    attestation: "direct"
-                };
-                await navigator.credentials.create({ publicKey });
-                completeLogin(userId, userName);
+                await supabaseClient
+                    .from('usuarios_dispositivos')
+                    .upsert({
+                        usuario_id: userId,
+                        usuario_nombre: userName,
+                        dispositivo_id: deviceId,
+                        ultimo_acceso: new Date().toISOString()
+                    }, { onConflict: ['dispositivo_id'] });
             } catch (err) {
-                console.error(err);
-                completeLogin(userId, userName);
+                console.error('Error registrando dispositivo:', err);
             }
         }
+
+            async function loginUser(userId, userName) {
+                const overlay = document.getElementById('authOverlay');
+                const authName = document.getElementById('authUserName');
+                const deviceId = getDeviceId(); // ID único del dispositivo
+                const registeredUser = await getDeviceUser(deviceId);
+
+                if (registeredUser) {
+                    if (registeredUser.usuario_id !== userId) {
+                        // Mostrar: usuario que intenta entrar (userName) no puede usar el dispositivo de registeredUser
+                        showErrorToast(`${registeredUser.usuario_nombre}, tú no eres ${userName}`);
+
+                        return;
+                    }
+
+                } else {
+                    // Si el dispositivo no está registrado, registrarlo automáticamente
+                    await registerDeviceForUser(deviceId, userId, userName);
+                }
+
+                // Mostrar overlay con mensaje de bienvenida antes de Face ID
+                authName.textContent = `Hola, ${userName}. Autentícate con Face ID`;
+                overlay.classList.add('active');
+
+                await new Promise(r => setTimeout(r, 1200));
+
+                if (!window.PublicKeyCredential) {
+                    completeLogin(userId, userName);
+                    return;
+                }
+
+                try {
+                    const storedCredential = await getUserCredential(userId);
+
+                    if (storedCredential) {
+                        // Face ID existente
+                        const challenge = new Uint8Array(32);
+                        window.crypto.getRandomValues(challenge);
+
+                        await navigator.credentials.get({
+                            publicKey: {
+                                challenge,
+                                allowCredentials: [{
+                                    id: Uint8Array.from(atob(storedCredential.credential_id), c => c.charCodeAt(0)),
+                                    type: "public-key"
+                                }],
+                                userVerification: "required",
+                                timeout: 60000
+                            }
+                        });
+
+                        completeLogin(userId, userName);
+                        return;
+                    }
+
+                    // Crear nueva credencial si no hay existente
+                    const challenge = new Uint8Array(32);
+                    window.crypto.getRandomValues(challenge);
+
+                    const credential = await navigator.credentials.create({
+                        publicKey: {
+                            challenge,
+                            rp: { name: "Pacha Sunset" },
+                            user: {
+                                id: new TextEncoder().encode(userId.toString()),
+                                name: userName,
+                                displayName: userName
+                            },
+                            pubKeyCredParams: [{ type: "public-key", alg: -7 }],
+                            authenticatorSelection: {
+                                authenticatorAttachment: "platform",
+                                userVerification: "required"
+                            },
+                            timeout: 60000,
+                            attestation: "direct"
+                        }
+                    });
+
+                    await supabaseClient.from('credenciales_biometricas').insert({
+                        usuario_id: userId,
+                        credential_id: btoa(String.fromCharCode(...new Uint8Array(credential.rawId))),
+                        public_key: JSON.stringify(credential.response)
+                    });
+
+                    completeLogin(userId, userName);
+
+                } catch (err) {
+                    console.error('Error biométrico:', err);
+                    overlay.classList.remove('active'); // Oculta overlay
+                    showErrorToast(`Verificación biométrica fallida o cancelada`);
+                    return;
+                }
+            }
+
+           function showErrorToast(message = "Verificación biométrica fallida o cancelada") {
+               const toast = document.getElementById('errorToast');
+
+               // Actualizar mensaje dinámicamente
+               const h3 = toast.querySelector('h3');
+               const p = toast.querySelector('p');
+
+               h3.textContent = "¡Error!";
+               p.textContent = message;
+
+               // Mostrar toast con animación
+               toast.classList.add('active');
+               if (window.navigator.vibrate) window.navigator.vibrate([20, 40, 20]);
+
+               // Ocultar después de 3.5s
+               setTimeout(() => {
+                   toast.classList.remove('active');
+               }, 3500);
+           }
+
 
         function completeLogin(userId, userName) {
             const overlay = document.getElementById('authOverlay');
@@ -812,7 +995,7 @@
                 // Preparar mensaje para Telegram
                 const telegramMessage = `✨ *PACHA SUNSET - NUEVO PEDIDO* ✨
 
-        👤 *CLIENTE:* ${currentUser.nombre}
+        👤 *SOCIO:* ${currentUser.nombre}
         🕺 *MESERO:* ${selectedWaiter.name}
         🕒 *HORA:* ${timeFormatted}
 
