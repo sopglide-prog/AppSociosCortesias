@@ -430,24 +430,53 @@
             transform: translateX(-50%) translateY(0) scale(1);
             opacity: 1;
         }
+        /* Contenedor principal de productos */
         #productsView {
+            position: relative;
             overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
+            transition: padding-top 0.3s ease;
         }
 
-        @media (max-width: 480px) {
-            header.sticky {
-                padding-top: 1.5rem !important;
-                padding-bottom: 0.75rem !important;
-            }
-        }
-        /* Evita que el teclado tape los productos */
-        body.searching #productsView {
-            padding-bottom: 65vh; /* espacio para el teclado */
+       
+
+        /* El buscador se hace fijo y visible arriba */
+        body.searching #productsContent .px-6.mt-4.mb-6 {
+            position: fixed !important;
+            top: calc(env(safe-area-inset-top) + 8px);
+            left: 0;
+            right: 0;
+            z-index: 200;
+            background: var(--bg-dark);
+            margin: 0;
+            padding-top: 8px;
+            padding-bottom: 8px;
         }
 
-        body.searching #cartBar {
-            display: none; /* ocultamos el checkout mientras se busca */
+        /* Opcional: sombra para que se destaque */
+        body.searching #productsContent .px-6.mt-4.mb-6 {
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+        }
+
+
+        body.searching header.sticky {
+            opacity: 0;
+            transform: translateY(-50px);
+            pointer-events: none;
+        }
+
+        body.searching #productsContent {
+            margin-top: 0 !important; /* sin espacio arriba */
+        }
+
+
+        /* Empuja el grid hacia arriba cuando estás en búsqueda */
+        body.searching #productGrid {
+            margin-top: -64px !important; /* sube el grid hacia arriba */
+        }
+
+        /* Ajusta si hay padding dentro de las tarjetas */
+        body.searching .product-card-pro {
+            margin-top: 4px !important;
         }
 
     </style>
@@ -473,7 +502,10 @@
             </svg>
         </div>
         <h3 class="text-2xl font-bold mb-2">¡Error!</h3>
-        <p class="text-gray-300 text-sm">Verificación biométrica fallida o cancelada</p>
+        <p id="errorToastMessage" class="text-gray-300 text-sm">
+            Error
+        </p>
+
     </div>
 
     <!-- AUTH OVERLAY -->
@@ -528,7 +560,8 @@
     </div>
 
     <!-- VIEW 2: PRODUCT SELECTION -->
-    <div id="productsView" class="view-hidden min-h-screen pb-32">
+    <div id="productsView" class="view-hidden h-screen overflow-auto pb-0">
+
         <header class="sticky top-0 z-50 px-6 pt-8 pb-4 glass border-none">
 
             <div class="flex items-center justify-between mb-5">
@@ -568,6 +601,7 @@
                                border border-white/10 focus:border-indigo-500
                                placeholder-gray-500 transition-all duration-200"
                     />
+
 
                     <!-- ICON -->
                     <svg class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
@@ -660,14 +694,20 @@
                 renderProducts();
             }
         }
-        function showErrorToast() {
+        function showErrorToast(message) {
             const toast = document.getElementById('errorToast');
+            const text = document.getElementById('errorToastMessage');
+
+            text.textContent = message;
+
             toast.classList.add('active');
             if (window.navigator.vibrate) window.navigator.vibrate([20, 40, 20]);
+
             setTimeout(() => {
                 toast.classList.remove('active');
             }, 3000);
         }
+
         function getDeviceId() {
             let id = localStorage.getItem('device_id');
             if (!id) {
@@ -972,45 +1012,31 @@
 
             const query = input.value.toLowerCase().trim();
 
-            const list = query === ''
-                ? allProducts
-                : allProducts.filter(p => p.nombre.toLowerCase().includes(query));
-
-            renderProducts(list);
-
-            // 👇 asegura visibilidad del grid
-            const container = document.getElementById('productsView');
-            const grid = document.getElementById('productGrid');
-
-            if (container && grid) {
-                container.scrollTo({
-                    top: grid.offsetTop - 20,
-                    behavior: 'smooth'
-                });
+            if (query === '') {
+                renderProducts(allProducts);
+                document.body.classList.remove('searching');
+                return;
             }
-        }
 
-        function handleSearchFocus() {
-            document.body.classList.add('searching');
+            const filteredProducts = allProducts.filter(p =>
+                p.nombre.toLowerCase().includes(query)
+            );
 
-            setTimeout(() => {
-                const container = document.getElementById('productsView');
-                const grid = document.getElementById('productGrid');
-
-                if (!container || !grid) return;
-
-                container.scrollTo({
-                    top: grid.offsetTop - 20,
-                    behavior: 'smooth'
-                });
-            }, 300);
+            renderProducts(filteredProducts);
         }
 
 
-        function handleSearchBlur() {
-            document.body.classList.remove('searching');
-        }
+            function handleSearchFocus() {
+                document.body.classList.add('searching');
+            }
 
+
+            function handleSearchBlur() {
+                const input = document.getElementById('productSearch');
+                if (input && input.value.trim() === '') {
+                    document.body.classList.remove('searching');
+                }
+            }
 
 
         function renderWaiters() {
