@@ -1,360 +1,617 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <title>Pacha Sunset | Premium Experience</title>
-        <meta name="theme-color" content="#000000" />
-        <script src="https://cdn.tailwindcss.com"></script>
-        <style>
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap');
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Pacha Sunset | Premium Experience</title>
+    <!-- iOS / Apple -->
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
 
-:root {
-    --primary: #667eea;
-    --primary-dark: #764ba2;
-    --accent: #ff007a;
-    --bg-dark: #050505;
-    --card-bg: rgba(255, 255, 255, 0.03);
-    --card-border: rgba(255, 255, 255, 0.08);
-}
+    <!-- Favicon navegador -->
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
-    font-family: 'Outfit', sans-serif;
-}
+    <!-- PWA manifest -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#000000">
 
-body {
-    background-color: var(--bg-dark);
-    color: #fff;
-    min-height: 100vh;
-    overflow-x: hidden;
-    padding-bottom: env(safe-area-inset-bottom);
-}
+    <!-- Título -->
+    <title>SopGlide - AppCortesías</title>
 
-.glass {
-    background: var(--card-bg);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid var(--card-border);
-}
 
-.brand-gradient {
-    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-}
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+            @import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap");
 
-.product-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 16px;
-    padding: 20px;
-}
+            :root {
+                --primary: #667eea;
+                --primary-dark: #764ba2;
+                --accent: #ff007a;
+                --bg-dark: #050505;
+                --card-bg: rgba(255, 255, 255, 0.03);
+                --card-border: rgba(255, 255, 255, 0.08);
+            }
 
-.product-card-pro {
-    position: relative;
-    border-radius: 24px;
-    overflow: hidden;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    aspect-ratio: 0.8;
-    cursor: pointer;
-}
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                -webkit-tap-highlight-color: transparent;
+                font-family: "Outfit", sans-serif;
+                touch-action: manipulation;
+            }
 
-.product-card-pro::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.8) 100%);
-    z-index: 1;
-}
+            body {
+                background-color: var(--bg-dark);
+                color: #fff;
+                min-height: 100vh;
+                overflow-x: hidden;
+                padding-bottom: env(safe-area-inset-bottom);
+            }
 
-.product-card-pro img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.6s ease;
-}
+            .glass {
+                background: var(--card-bg);
+                backdrop-filter: blur(20px);
+                -webkit-backdrop-filter: blur(20px);
+                border: 1px solid var(--card-border);
+            }
 
-.selection-indicator {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    width: 28px;
-    height: 28px;
-    background: var(--primary);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 10;
-    opacity: 0;
-    transform: scale(0.5);
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.5);
-}
+            .brand-gradient {
+                background: linear-gradient(
+                    135deg,
+                    var(--primary) 0%,
+                    var(--primary-dark) 100%
+                );
+            }
 
-.product-card-pro.selected .selection-indicator {
-    opacity: 1;
-    transform: scale(1);
-}
+            .product-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+                gap: 16px;
+                padding: 20px;
+            }
 
-.premium-checkout {
-    position: fixed;
-    bottom: calc(24px + env(safe-area-inset-bottom));
-    left: 50%;
-    transform: translateX(-50%) translateY(150%);
-    width: calc(100% - 40px);
-    max-width: 400px;
-    border-radius: 28px;
-    padding: 16px 24px;
-    z-index: 100;
-    transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-}
+            .product-card-pro {
+                position: relative;
+                border-radius: 24px;
+                overflow: hidden;
+                transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                aspect-ratio: 0.8;
+                cursor: pointer;
+            }
 
-.premium-checkout.active {
-    transform: translateX(-50%) translateY(0);
-}
+            .product-card-pro::after {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(
+                    to bottom,
+                    transparent 40%,
+                    rgba(0, 0, 0, 0.8) 100%
+                );
+                z-index: 1;
+            }
 
-.view-hidden {
-    display: none !important;
-}
+            .product-card-pro img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform 0.6s ease;
+            }
 
-.bg-glow {
-    position: fixed;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100vw;
-    height: 100vh;
-    background: radial-gradient(circle at 50% -20%, rgba(102, 126, 234, 0.2), transparent 70%);
-    pointer-events: none;
-    z-index: -1;
-}
+            .selection-indicator {
+                position: absolute;
+                top: 12px;
+                right: 12px;
+                width: 28px;
+                height: 28px;
+                background: var(--primary);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 10;
+                opacity: 0;
+                transform: scale(0.5);
+                transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                box-shadow: 0 4px 12px rgba(102, 126, 234, 0.5);
+            }
 
-.no-scrollbar::-webkit-scrollbar { display: none; }
-.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+            .product-card-pro.selected .selection-indicator {
+                opacity: 1;
+                transform: scale(1);
+            }
 
-.user-card {
-    position: relative;
-    background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 30px;
-    padding: 24px;
-    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-    overflow: hidden;
-}
+            .premium-checkout {
+                position: fixed;
+                bottom: calc(24px + env(safe-area-inset-bottom));
+                left: 50%;
+                transform: translateX(-50%) translateY(150%);
+                width: calc(100% - 40px);
+                max-width: 400px;
+                border-radius: 28px;
+                padding: 16px 24px;
+                z-index: 100;
+                transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+            }
 
-.user-card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(45deg, transparent, rgba(102, 126, 234, 0.1), transparent);
-    transform: translateX(-100%);
-    transition: transform 0.6s ease;
-}
+            .premium-checkout.active {
+                transform: translateX(-50%) translateY(0);
+            }
 
-.user-card:active {
-    transform: scale(0.96);
-    background: rgba(255,255,255,0.08);
-    border-color: var(--primary);
-}
+            .view-hidden {
+                display: none !important;
+            }
 
-.user-avatar-glow { position: relative; }
+            .bg-glow {
+                position: fixed;
+                top: 0;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 100vw;
+                height: 100vh;
+                background: radial-gradient(
+                    circle at 50% -20%,
+                    rgba(102, 126, 234, 0.2),
+                    transparent 70%
+                );
+                pointer-events: none;
+                z-index: -1;
+            }
 
-.waiter-card {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 20px;
-    padding: 12px 16px;
-    transition: all 0.3s ease;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
+            .no-scrollbar::-webkit-scrollbar {
+                display: none;
+            }
+            .no-scrollbar {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
 
-.waiter-card.selected {
-    background: var(--primary);
-    border-color: transparent;
-    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
-}
+            .user-card {
+                position: relative;
+                background: linear-gradient(
+                    145deg,
+                    rgba(255, 255, 255, 0.05),
+                    rgba(255, 255, 255, 0.02)
+                );
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 30px;
+                padding: 24px;
+                transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+                overflow: hidden;
+            }
 
-.waiter-avatar {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-size: 10px;
-}
+            .user-card::before {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(
+                    45deg,
+                    transparent,
+                    rgba(102, 126, 234, 0.1),
+                    transparent
+                );
+                transform: translateX(-100%);
+                transition: transform 0.6s ease;
+            }
 
-#authOverlay {
-    position: fixed;
-    inset: 0;
-    z-index: 200;
-    background: rgba(0,0,0,0.85);
-    backdrop-filter: blur(20px);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.4s ease;
-}
+            .user-card:active {
+                transform: scale(0.96);
+                background: rgba(255, 255, 255, 0.08);
+                border-color: var(--primary);
+            }
 
-#authOverlay.active { opacity: 1; pointer-events: auto; }
+            .user-avatar-glow {
+                position: relative;
+            }
 
-.face-id-scanner {
-    width: 120px;
-    height: 120px;
-    position: relative;
-    margin-bottom: 30px;
-}
+            .waiter-card {
+                background: rgba(255, 255, 255, 0.05);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 20px;
+                padding: 12px 16px;
+                transition: all 0.3s ease;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
 
-.face-id-frame {
-    position: absolute;
-    inset: 0;
-    border: 2px solid rgba(255,255,255,0.1);
-    border-radius: 30px;
-}
+            .waiter-card.selected {
+                background: var(--primary);
+                border-color: transparent;
+                box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+            }
 
-.face-id-corners {
-    position: absolute;
-    inset: -2px;
-    border: 3px solid var(--primary);
-    border-radius: 30px;
-    clip-path: polygon(0 0, 30% 0, 30% 10%, 10% 10%, 10% 30%, 0 30%, 0 0, 70% 0, 100% 0, 100% 30%, 90% 30%, 90% 10%, 70% 10%, 70% 0, 100% 70%, 100% 100%, 70% 100%, 70% 90%, 90% 90%, 90% 70%, 100% 70%, 30% 100%, 0 100%, 0 70%, 10% 70%, 10% 90%, 30% 90%, 30% 100%);
-    animation: pulse 2s infinite;
-}
+            .waiter-avatar {
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.1);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: bold;
+                font-size: 10px;
+            }
 
-@keyframes pulse {
-    0% { transform: scale(1); opacity: 0.8; }
-    50% { transform: scale(1.05); opacity: 1; }
-    100% { transform: scale(1); opacity: 0.8; }
-}
+            #authOverlay {
+                position: fixed;
+                inset: 0;
+                z-index: 200;
+                background: rgba(0, 0, 0, 0.85);
+                backdrop-filter: blur(20px);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.4s ease;
+            }
 
-.scan-line {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background: var(--primary);
-    box-shadow: 0 0 15px var(--primary);
-    animation: scan 2s infinite ease-in-out;
-    border-radius: 2px;
-}
+            #authOverlay.active {
+                opacity: 1;
+                pointer-events: auto;
+            }
 
-@keyframes scan {
-    0% { top: 10%; }
-    50% { top: 90%; }
-    100% { top: 10%; }
-}
+            .face-id-scanner {
+                width: 120px;
+                height: 120px;
+                position: relative;
+                margin-bottom: 30px;
+            }
 
-#successToast {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) scale(0.8);
-    z-index: 300;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(25px);
-    -webkit-backdrop-filter: blur(25px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    padding: 40px;
-    border-radius: 40px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    pointer-events: none;
-    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    text-align: center;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-}
+            .face-id-frame {
+                position: absolute;
+                inset: 0;
+                border: 2px solid rgba(255, 255, 255, 0.1);
+                border-radius: 30px;
+            }
 
-#successToast.active {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-    pointer-events: auto;
-}
+            .face-id-corners {
+                position: absolute;
+                inset: -2px;
+                border: 3px solid var(--primary);
+                border-radius: 30px;
+                clip-path: polygon(
+                    0 0,
+                    30% 0,
+                    30% 10%,
+                    10% 10%,
+                    10% 30%,
+                    0 30%,
+                    0 0,
+                    70% 0,
+                    100% 0,
+                    100% 30%,
+                    90% 30%,
+                    90% 10%,
+                    70% 10%,
+                    70% 0,
+                    100% 70%,
+                    100% 100%,
+                    70% 100%,
+                    70% 90%,
+                    90% 90%,
+                    90% 70%,
+                    100% 70%,
+                    30% 100%,
+                    0 100%,
+                    0 70%,
+                    10% 70%,
+                    10% 90%,
+                    30% 90%,
+                    30% 100%
+                );
+                animation: pulse 2s infinite;
+            }
 
-.success-circle {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #4ade80, #22c55e);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 24px;
-    box-shadow: 0 10px 25px rgba(34, 197, 94, 0.4);
-}
+            @keyframes pulse {
+                0% {
+                    transform: scale(1);
+                    opacity: 0.8;
+                }
+                50% {
+                    transform: scale(1.05);
+                    opacity: 1;
+                }
+                100% {
+                    transform: scale(1);
+                    opacity: 0.8;
+                }
+            }
 
-#waiterOverlay {
-    position: fixed;
-    inset: 0;
-    z-index: 150;
-    background: rgba(0,0,0,0.9);
-    backdrop-filter: blur(25px);
-    display: flex;
-    flex-direction: column;
-    padding: 40px 20px;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.4s ease;
-}
+            .scan-line {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 2px;
+                background: var(--primary);
+                box-shadow: 0 0 15px var(--primary);
+                animation: scan 2s infinite ease-in-out;
+                border-radius: 2px;
+            }
 
-#waiterOverlay.active { opacity: 1; pointer-events: auto; }
+            @keyframes scan {
+                0% {
+                    top: 10%;
+                }
+                50% {
+                    top: 90%;
+                }
+                100% {
+                    top: 10%;
+                }
+            }
 
-#cartSummaryContainer {
-    max-height: 48px;
-    overflow-y: auto;
-    mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
-    -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
-}
+            #successToast {
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%) scale(0.8);
+                z-index: 300;
+                background: rgba(255, 255, 255, 0.1);
+                backdrop-filter: blur(25px);
+                -webkit-backdrop-filter: blur(25px);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                padding: 40px;
+                border-radius: 40px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                opacity: 0;
+                pointer-events: none;
+                transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                text-align: center;
+                box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            }
 
-#errorToast {
-    position: fixed;
-    top: 20%;
-    left: 50%;
-    transform: translateX(-50%) translateY(-20px) scale(0.95);
-    background: rgba(0,0,0,0.85);
-    backdrop-filter: blur(25px);
-    text-align: center;
-    padding: 30px 40px;
-    border-radius: 2rem;
-    border: 1px solid rgba(255,255,255,0.2);
-    color: white;
-    z-index: 9999;
-    opacity: 0;
-    pointer-events: none;
-    transition: all 0.3s ease-in-out;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
+            #successToast.active {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+                pointer-events: auto;
+            }
 
-#errorToast.active {
-    transform: translateX(-50%) translateY(0) scale(1);
-    opacity: 1;
-    pointer-events: auto;
-}
+            .success-circle {
+                width: 80px;
+                height: 80px;
+                border-radius: 50%;
+                background: linear-gradient(135deg, #4ade80, #22c55e);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-bottom: 24px;
+                box-shadow: 0 10px 25px rgba(34, 197, 94, 0.4);
+            }
 
-#productsView { position: relative; overflow-y: auto; transition: padding-top 0.3s ease; }
+            #waiterOverlay {
+                position: fixed;
+                inset: 0;
+                z-index: 150;
+                background: rgba(0, 0, 0, 0.9);
+                backdrop-filter: blur(25px);
+                display: flex;
+                flex-direction: column;
+                padding: 40px 20px;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.4s ease;
+            }
 
-body.searching header.sticky { opacity: 0; transform: translateY(-50px); pointer-events: none; }
+            #waiterOverlay.active {
+                opacity: 1;
+                pointer-events: auto;
+            }
 
-.highlight-bar { border: 2px solid #22c55e; box-shadow: 0 0 10px #22c55e; }
+            #cartSummaryContainer {
+                max-height: 48px;
+                overflow-y: auto;
+                mask-image: linear-gradient(
+                    to bottom,
+                    black 80%,
+                    transparent 100%
+                );
+                -webkit-mask-image: linear-gradient(
+                    to bottom,
+                    black 80%,
+                    transparent 100%
+                );
+            }
+
+            #errorToast {
+                position: fixed;
+                top: 20%;
+                left: 50%;
+                transform: translateX(-50%) translateY(-20px) scale(0.95);
+                background: rgba(0, 0, 0, 0.85);
+                backdrop-filter: blur(25px);
+                text-align: center;
+                padding: 30px 40px;
+                border-radius: 2rem;
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                color: white;
+                z-index: 9999;
+                opacity: 0;
+                pointer-events: none;
+                transition: all 0.3s ease-in-out;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            #errorToast.active {
+                transform: translateX(-50%) translateY(0) scale(1);
+                opacity: 1;
+                pointer-events: auto;
+            }
+
+            #productsView {
+                position: relative;
+                overflow-y: auto;
+            }
+
+            .highlight-bar {
+                border: 2px solid #22c55e;
+                box-shadow: 0 0 10px #22c55e;
+            }
+
+            #searchClear {
+                display: none;
+            }
+            #searchClear.visible {
+                display: flex;
+            }
+
+            /* Search mode: collapse header to just the search bar */
+            #productsView.search-mode #headerTop {
+                display: none;
+            }
+            #productsView.search-mode #headerTabs {
+                display: none;
+            }
+            #productsView.search-mode #searchBar {
+                margin-top: 0;
+            }
+            #productsView.search-mode header {
+                padding-top: 12px;
+                padding-bottom: 10px;
+            }
+
+            #searchCancelBtn {
+                display: none;
+            }
+            #productsView.search-mode #searchCancelBtn {
+                display: flex;
+            }
+
+            /* ── RECARGA OVERLAY ── */
+            #recargaOverlay {
+                position: fixed;
+                inset: 0;
+                z-index: 160;
+                background: rgba(0, 0, 0, 0.97);
+                backdrop-filter: blur(25px);
+                -webkit-backdrop-filter: blur(25px);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 30px 24px;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.4s ease;
+            }
+            #recargaOverlay.active {
+                opacity: 1;
+                pointer-events: auto;
+            }
+            .recarga-step {
+                display: none;
+                flex-direction: column;
+                align-items: center;
+                width: 100%;
+                max-width: 360px;
+                text-align: center;
+                gap: 0;
+            }
+            .recarga-step.active {
+                display: flex;
+            }
+            .qr-container {
+                background: white;
+                border-radius: 24px;
+                padding: 18px;
+                margin: 18px 0;
+                box-shadow: 0 10px 40px rgba(102,126,234,0.3);
+            }
+            .qr-container img {
+                width: 220px;
+                height: 220px;
+                object-fit: contain;
+                display: block;
+            }
+            .timer-ring {
+                width: 110px;
+                height: 110px;
+                border-radius: 50%;
+                background: rgba(102, 126, 234, 0.12);
+                border: 3px solid var(--primary);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.6rem;
+                font-weight: 700;
+                margin: 20px 0 12px;
+                box-shadow: 0 0 24px rgba(102,126,234,0.3);
+                animation: pulse 2s infinite;
+            }
+            .upload-area {
+                width: 100%;
+                border: 2px dashed rgba(255,255,255,0.2);
+                border-radius: 22px;
+                padding: 28px 20px;
+                text-align: center;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                margin: 14px 0;
+                background: rgba(255,255,255,0.03);
+                -webkit-tap-highlight-color: transparent;
+            }
+            .upload-area.has-file {
+                border-color: #22c55e;
+                background: rgba(34,197,94,0.08);
+            }
+            .upload-area:active {
+                transform: scale(0.97);
+            }
+            #comprobanteInput {
+                display: none;
+            }
+
+            /* ── CALENDARIO PDF OVERLAY ── */
+            #pdfCalendarioOverlay {
+                position: fixed;
+                inset: 0;
+                z-index: 170;
+                background: rgba(0,0,0,0.85);
+                backdrop-filter: blur(20px);
+                -webkit-backdrop-filter: blur(20px);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 30px 24px;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.3s ease;
+            }
+            #pdfCalendarioOverlay.active {
+                opacity: 1;
+                pointer-events: auto;
+            }
+            #pdfCalendarioOverlay input[type="date"] {
+                width: 100%;
+                padding: 16px;
+                border-radius: 16px;
+                border: 1px solid rgba(255,255,255,0.15);
+                background: rgba(255,255,255,0.08);
+                color: #fff;
+                font-size: 1.1rem;
+                font-family: "Outfit", sans-serif;
+                outline: none;
+                margin: 20px 0;
+                -webkit-appearance: none;
+                text-align: center;
+            }
+            #pdfCalendarioOverlay input[type="date"]::-webkit-calendar-picker-indicator {
+                filter: invert(1);
+                cursor: pointer;
+                transform: scale(1.4);
+            }
         </style>
     </head>
     <body>
@@ -363,7 +620,16 @@ body.searching header.sticky { opacity: 0; transform: translateY(-50px); pointer
         <!-- SUCCESS NOTIFICATION -->
         <div id="successToast">
             <div class="success-circle">
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+                <svg
+                    width="40"
+                    height="40"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="white"
+                    stroke-width="4"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
                     <path d="M20 6L9 17l-5-5" />
                 </svg>
             </div>
@@ -373,8 +639,20 @@ body.searching header.sticky { opacity: 0; transform: translateY(-50px); pointer
 
         <!-- ERROR TOAST -->
         <div id="errorToast">
-            <div class="success-circle" style="background: linear-gradient(135deg, #f87171, #ef4444)">
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+            <div
+                class="success-circle"
+                style="background: linear-gradient(135deg, #f87171, #ef4444)"
+            >
+                <svg
+                    width="40"
+                    height="40"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="white"
+                    stroke-width="4"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
                     <path d="M18 6L6 18M6 6l12 12" />
                 </svg>
             </div>
@@ -389,408 +667,997 @@ body.searching header.sticky { opacity: 0; transform: translateY(-50px); pointer
                 <div class="face-id-corners"></div>
                 <div class="scan-line"></div>
                 <div class="absolute inset-0 flex items-center justify-center">
-                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+                    <svg
+                        width="40"
+                        height="40"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="white"
+                        stroke-width="1.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <path
+                            d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"
+                        />
                         <path d="M12 8v8m-4-4h8" />
                     </svg>
                 </div>
             </div>
             <h3 class="text-xl font-bold mb-2">Verificando...</h3>
-            <p class="text-gray-400 text-sm" id="authUserName">Iniciando Face ID</p>
+            <p class="text-gray-400 text-sm" id="authUserName">
+                Iniciando Face ID
+            </p>
         </div>
 
         <!-- WAITER SELECTION OVERLAY -->
         <div id="waiterOverlay">
             <div class="text-center mb-10">
                 <h3 class="text-2xl font-bold mb-2">¿Quién te atiende?</h3>
-                <p class="text-gray-400 text-sm">Selecciona el mesero para esta reserva</p>
+                <p class="text-gray-400 text-sm">
+                    Selecciona el mesero para esta reserva
+                </p>
             </div>
-            <div class="grid grid-cols-1 gap-4 overflow-y-auto no-scrollbar pb-10" id="waiterGrid"></div>
-            <div id="barSection" class="mt-6 mb-6 hidden transition-all duration-300">
-                <p class="text-gray-400 text-sm mb-3 text-center">Selecciona la barra</p>
+            <div
+                class="grid grid-cols-1 gap-4 overflow-y-auto no-scrollbar pb-10"
+                id="waiterGrid"
+            ></div>
+            <div
+                id="barSection"
+                class="mt-6 mb-6 hidden transition-all duration-300"
+            >
+                <p class="text-gray-400 text-sm mb-3 text-center">
+                    Selecciona la barra
+                </p>
                 <div id="barGrid" class="grid grid-cols-1 gap-3"></div>
             </div>
             <div id="pedidoNotaContainer" class="mb-3 hidden">
-                <div id="notaToggleBtn" onclick="toggleNotaInput()" class="cursor-pointer text-center text-lg text-indigo-400 mb-2">
+                <div
+                    id="notaToggleBtn"
+                    onclick="toggleNotaInput()"
+                    class="cursor-pointer text-center text-lg text-indigo-400 mb-2"
+                >
                     ➕ A nombre de quien?
                 </div>
-                <div id="notaInputBox" class="hidden transition-all duration-300">
-                    <label for="pedidoNota" class="text-[10px] text-gray-400 mb-1 block tracking-wide">Nombre del pedido</label>
-                    <input type="text" id="pedidoNota" class="w-full px-3 py-1.5 rounded-md bg-white/10 border border-white/10 text-white text-sm" placeholder="Ej: Invitado" />
+                <div
+                    id="notaInputBox"
+                    class="hidden transition-all duration-300"
+                >
+                    <label
+                        for="pedidoNota"
+                        class="text-[10px] text-gray-400 mb-1 block tracking-wide"
+                        >Nombre del pedido</label
+                    >
+                    <input
+                        type="text"
+                        id="pedidoNota"
+                        class="w-full px-3 py-1.5 rounded-md bg-white/10 border border-white/10 text-white text-sm"
+                        placeholder="Ej: Invitado"
+                    />
                 </div>
             </div>
             <div class="mt-auto flex gap-4">
-                <button onclick="closeWaiterOverlay()" class="flex-1 py-4 glass rounded-2xl font-bold text-sm">Cancelar</button>
-                <button id="finalConfirmBtn" onclick="confirmOrderWithWaiter()" class="flex-1 py-4 brand-gradient rounded-2xl font-bold text-sm shadow-xl" disabled>Confirmar</button>
+                <button
+                    onclick="closeWaiterOverlay()"
+                    class="flex-1 py-4 glass rounded-2xl font-bold text-sm"
+                >
+                    Cancelar
+                </button>
+                <button
+                    id="finalConfirmBtn"
+                    onclick="confirmOrderWithWaiter()"
+                    class="flex-1 py-4 brand-gradient rounded-2xl font-bold text-sm shadow-xl"
+                    disabled
+                >
+                    Confirmar
+                </button>
+            </div>
+        </div>
+
+        <!-- RECARGA OVERLAY -->
+        <div id="recargaOverlay">
+
+            <!-- PASO 1: Saludo -->
+            <div class="recarga-step active" id="recargaStep1">
+                <div class="text-5xl mb-5">💳</div>
+                <h3 class="text-2xl font-bold mb-2" id="recargaGreeting">Hola, ¿quieres recargar?</h3>
+                <p class="text-gray-400 text-sm mb-8">Recarga saldo para tus próximos pedidos</p>
+                <div class="flex flex-col gap-3 w-full">
+                    <button onclick="showRecargaStep(2)" class="w-full py-4 brand-gradient rounded-2xl font-bold text-base shadow-xl active:scale-95 transition-all">
+                        Sí, recargar dinero
+                    </button>
+                    <button onclick="closeRecargaOverlay()" class="w-full py-4 glass rounded-2xl font-bold text-sm text-gray-300 active:scale-95 transition-all">
+                        Cancelar
+                    </button>
+                </div>
+            </div>
+
+            <!-- PASO 2: QR -->
+            <div class="recarga-step" id="recargaStep2">
+                <h3 class="text-xl font-bold mb-1">Escanea o descarga el QR</h3>
+                <p class="text-gray-400 text-xs mb-1">para realizar el pago</p>
+                <div class="qr-container">
+                    <img src="/CAMEL_Mesa1_CASCABEL_BEBIDAS.png" alt="QR de pago" id="qrImage" />
+                </div>
+                <p class="text-gray-400 text-xs mb-5">Escanea con tu app bancaria o descarga la imagen</p>
+                <div class="flex flex-col gap-3 w-full">
+                    <button onclick="downloadQR()" class="w-full py-4 brand-gradient rounded-2xl font-bold text-sm shadow-xl active:scale-95 transition-all flex items-center justify-center gap-2">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
+                        Descargar QR y ya pagué
+                    </button>
+                    <button onclick="showRecargaStep(3)" class="w-full py-3 glass rounded-2xl font-bold text-sm text-gray-300 active:scale-95 transition-all">
+                        Ya lo escanee, continuar
+                    </button>
+                    <button onclick="closeRecargaOverlay()" class="text-gray-500 text-sm py-2 active:opacity-60">Cancelar</button>
+                </div>
+            </div>
+
+            <!-- PASO 3: Timer 10 min -->
+            <div class="recarga-step" id="recargaStep3">
+                <div class="text-4xl mb-4">⏳</div>
+                <h3 class="text-xl font-bold mb-1">Esperando tu pago</h3>
+                <p class="text-gray-400 text-sm mb-2">Tiempo estimado de procesamiento</p>
+                <div class="timer-ring" id="timerDisplay">10:00</div>
+                <p class="text-gray-500 text-xs mb-8">El tiempo correrá mientras realizas el pago</p>
+                <div class="flex flex-col gap-3 w-full">
+                    <button onclick="showRecargaStep(4)" class="w-full py-4 brand-gradient rounded-2xl font-bold text-sm shadow-xl active:scale-95 transition-all">
+                        ✅ Ya pagué, subir comprobante
+                    </button>
+                    <button onclick="closeRecargaOverlay()" class="text-gray-500 text-sm py-2 active:opacity-60">Cancelar</button>
+                </div>
+            </div>
+
+            <!-- PASO 4: Subir comprobante -->
+            <div class="recarga-step" id="recargaStep4">
+                <div class="text-4xl mb-4">🧾</div>
+                <h3 class="text-xl font-bold mb-1">Sube tu comprobante</h3>
+                <p class="text-gray-400 text-xs mb-2">Captura de pantalla o foto del comprobante de pago</p>
+                <input type="file" id="comprobanteInput" accept="image/*" onchange="handleComprobanteFile(event)" />
+                <div class="upload-area" id="uploadArea" onclick="triggerComprobanteInput()">
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" class="mx-auto mb-3"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    <p class="text-gray-400 text-sm font-semibold" id="uploadAreaText">Toca aquí para seleccionar imagen</p>
+                    <p class="text-gray-600 text-xs mt-1">JPG, PNG o captura de pantalla</p>
+                </div>
+                <div class="flex flex-col gap-3 w-full">
+                    <button id="btnSubirComprobante" onclick="subirComprobante()" class="w-full py-4 brand-gradient rounded-2xl font-bold text-sm shadow-xl active:scale-95 transition-all">
+                        Subir Comprobante y Recargar
+                    </button>
+                    <button onclick="closeRecargaOverlay()" class="text-gray-500 text-sm py-2 active:opacity-60">Cancelar</button>
+                </div>
+            </div>
+
+            <!-- PASO 5: Éxito -->
+            <div class="recarga-step" id="recargaStep5">
+                <div class="success-circle mb-6">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                </div>
+                <h3 class="text-2xl font-bold mb-3">¡Gracias!</h3>
+                <p class="text-gray-300 text-sm mb-2">En breve se le recargará su saldo</p>
+                <p class="text-gray-500 text-xs mb-8">Tu comprobante fue enviado correctamente</p>
+                <button onclick="closeRecargaOverlay()" class="w-full py-4 brand-gradient rounded-2xl font-bold text-sm shadow-xl active:scale-95 transition-all">
+                    Volver a la app
+                </button>
+            </div>
+
+        </div>
+
+        <!-- CALENDARIO PDF OVERLAY -->
+        <div id="pdfCalendarioOverlay">
+            <div style="width:100%;max-width:340px;text-align:center;">
+                <div class="text-4xl mb-3">📅</div>
+                <h3 class="text-xl font-bold mb-1">Selecciona la fecha</h3>
+                <p class="text-gray-400 text-sm mb-1">Se descargará el reporte de pedidos de ese día</p>
+                <input type="date" id="pdfFechaInput" />
+                <div class="flex flex-col gap-3">
+                    <button onclick="confirmarDescargaPDF()" class="w-full py-4 brand-gradient rounded-2xl font-bold text-sm shadow-xl active:scale-95 transition-all flex items-center justify-center gap-2">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
+                        Descargar PDF
+                    </button>
+                    <button onclick="cerrarCalendarioPDF()" class="text-gray-500 text-sm py-2 active:opacity-60">Cancelar</button>
+                </div>
             </div>
         </div>
 
         <!-- VIEW 1: USER SELECTION -->
-        <div id="usersView" class="min-h-screen flex flex-col items-center justify-center p-6 transition-all duration-300">
+        <div
+            id="usersView"
+            class="min-h-screen flex flex-col items-center justify-center p-6 transition-all duration-300"
+        >
             <div class="text-center mb-16 pt-10">
-                <h1 class="text-6xl font-bold tracking-tighter mb-3" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">PACHA</h1>
-                <p class="text-gray-500 uppercase tracking-[0.4em] text-[10px] font-semibold">Premium Sunset Experience</p>
+                <h1
+                    class="text-6xl font-bold tracking-tighter mb-3"
+                    style="
+                        background: linear-gradient(
+                            135deg,
+                            #667eea 0%,
+                            #764ba2 100%
+                        );
+                        -webkit-background-clip: text;
+                        -webkit-text-fill-color: transparent;
+                    "
+                >
+                    PACHA
+                </h1>
+                <p
+                    class="text-gray-500 uppercase tracking-[0.4em] text-[10px] font-semibold"
+                >
+                    Premium Sunset Experience
+                </p>
             </div>
             <div class="w-full max-w-sm px-2">
-                <p class="text-center text-gray-400 text-sm mb-8 font-medium">Selecciona tu perfil para continuar</p>
+                <p class="text-center text-gray-400 text-sm mb-8 font-medium">
+                    Selecciona tu perfil para continuar
+                </p>
                 <div id="usersGrid" class="grid grid-cols-2 gap-4"></div>
             </div>
             <div class="mt-12">
-                <p class="text-[10px] text-gray-600 uppercase tracking-widest font-bold">Made with SopGlide</p>
+                <p
+                    class="text-[10px] text-gray-600 uppercase tracking-widest font-bold"
+                >
+                    Made with SopGlide
+                </p>
             </div>
         </div>
 
         <!-- VIEW 2: PRODUCT SELECTION -->
         <div id="productsView" class="view-hidden h-screen overflow-auto pb-0">
             <header class="sticky top-0 z-50 px-6 pt-8 pb-4 glass border-none">
-                <div class="flex items-center justify-between mb-5">
-                    <button onclick="handleBack()" class="w-10 h-10 rounded-full glass flex items-center justify-center active:scale-90 transition-transform">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                <div
+                    id="headerTop"
+                    class="flex items-center justify-between mb-5"
+                >
+                    <button
+                        onclick="handleBack()"
+                        class="w-10 h-10 rounded-full glass flex items-center justify-center active:scale-90 transition-transform"
+                    >
+                        <svg
+                            width="20"
+                            height="20"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2.5"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <path d="M15 18l-6-6 6-6" />
+                        </svg>
                     </button>
                     <div class="text-center">
-                        <h2 id="currentUserName" class="text-lg font-bold tracking-tight text-white">Bienvenido</h2>
-                        <p class="text-[9px] text-gray-400 uppercase tracking-widest font-bold">Nuestra Selección</p>
+                        <h2
+                            id="currentUserName"
+                            class="text-lg font-bold tracking-tight text-white"
+                        >
+                            Bienvenido
+                        </h2>
+                        <p
+                            class="text-[9px] text-gray-400 uppercase tracking-widest font-bold"
+                        >
+                            Nuestra Selección
+                        </p>
                     </div>
-                    <div class="w-10 h-10 rounded-full glass flex items-center justify-center">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33 1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82 1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                    <div
+                        class="w-10 h-10 rounded-full glass flex items-center justify-center"
+                    >
+                        <svg
+                            width="18"
+                            height="18"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                        >
+                            <circle cx="12" cy="12" r="3" />
+                            <path
+                                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33 1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82 1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"
+                            />
+                        </svg>
                     </div>
                 </div>
-                <div class="flex gap-2 overflow-x-auto pb-2 no-scrollbar px-1">
-                    <button onclick="showProductsContent()" id="tabProducts" class="px-5 py-2.5 brand-gradient rounded-full text-xs font-bold whitespace-nowrap shadow-lg shadow-indigo-500/20">Selección</button>
-                    <button onclick="loadUserReservations()" id="tabHistory" class="px-5 py-2.5 glass rounded-full text-xs text-gray-300 font-semibold whitespace-nowrap">Mis Reservas</button>
+                <div
+                    id="headerTabs"
+                    class="flex items-center justify-between gap-2 pb-3 px-1"
+                >
+                    <!-- Tabs -->
+                    <div class="flex gap-1.5 items-center flex-1 min-w-0">
+                        <button
+                            onclick="showProductsContent()"
+                            id="tabProducts"
+                            class="px-3 py-2 brand-gradient rounded-full text-xs font-bold whitespace-nowrap shadow-lg shadow-indigo-500/20 flex-shrink-0"
+                        >
+                            Selección
+                        </button>
+                        <button
+                            onclick="loadUserReservations()"
+                            id="tabHistory"
+                            class="px-3 py-2 glass rounded-full text-xs text-gray-300 font-semibold whitespace-nowrap flex-shrink-0"
+                        >
+                            Mis Reservas
+                        </button>
+                        <div
+                            id="saldoDisplay"
+                            onclick="openRecargaOverlay()"
+                            class="flex items-center gap-1 px-2.5 py-2 rounded-full text-xs font-bold text-white whitespace-nowrap border border-indigo-500/40 flex-shrink-0 cursor-pointer active:scale-95 transition-transform"
+                            style="background: rgba(102, 126, 234, 0.12)"
+                        >
+                            💳 <span id="saldoAmount">$0.00</span>
+                        </div>
+                    </div>
+
+                    <!-- Botón PDF -->
+                    <button
+                        onclick="abrirCalendarioPDF()"
+                        class="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 hover:bg-green-500/80 active:scale-90 transition-all"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="18"
+                            height="18"
+                            fill="none"
+                            stroke="white"
+                            stroke-width="2"
+                            viewBox="0 0 24 24"
+                        >
+                            <path d="M12 3v12"></path>
+                            <path d="M7 10l5 5 5-5"></path>
+                            <path d="M5 21h14"></path>
+                        </svg>
+                    </button>
+                </div>
+                <!-- SEARCH BAR inside header so always visible -->
+                <div class="flex items-center gap-3 mt-1">
+                    <div id="searchBar" class="relative flex-1">
+                        <svg
+                            class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+                            width="17"
+                            height="17"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                        >
+                            <circle cx="11" cy="11" r="8" />
+                            <path d="M21 21l-4.3-4.3" />
+                        </svg>
+                        <input
+                            id="productSearch"
+                            type="text"
+                            placeholder="Buscar bebida, marca o inicial..."
+                            oninput="filterProducts()"
+                            onfocus="enterSearchMode()"
+                            class="w-full pl-11 pr-10 py-3 rounded-2xl bg-white/5 text-white text-sm tracking-wide outline-none border border-white/10 focus:border-indigo-500 focus:bg-white/8 placeholder-gray-500 transition-all duration-200"
+                        />
+                        <button
+                            id="searchClear"
+                            onclick="clearSearch()"
+                            class="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-white/20 items-center justify-center text-white text-xs font-bold active:scale-90 transition-transform"
+                        >
+                            ✕
+                        </button>
+                    </div>
+                    <button
+                        id="searchCancelBtn"
+                        onclick="exitSearchMode()"
+                        class="text-indigo-400 text-sm font-bold whitespace-nowrap active:opacity-60 transition-opacity"
+                    >
+                        Cancelar
+                    </button>
                 </div>
             </header>
             <div id="productsContent">
-                <div class="px-6 mt-4 mb-6">
-                    <div class="relative">
-                        <input id="productSearch" type="text" placeholder="Buscar bebida, marca o inicial..." oninput="filterProducts()" onfocus="handleSearchFocus()" onblur="handleSearchBlur()" class="w-full pl-12 pr-4 py-4 rounded-2xl bg-zinc-900/80 backdrop-blur text-white text-sm tracking-wide outline-none border border-white/10 focus:border-indigo-500 placeholder-gray-500 transition-all duration-200" />
-                        <svg class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.3-4.3"/></svg>
-                    </div>
-                </div>
                 <div class="product-grid" id="productGrid"></div>
             </div>
             <div id="historyContent" class="view-hidden p-6 space-y-4">
-                <button onclick="showProductsContent()" class="w-full py-3 flex items-center justify-center gap-2 glass rounded-2xl text-sm font-bold text-indigo-400 border border-indigo-500/30 active:scale-95 transition-all mb-2">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                <button
+                    onclick="showProductsContent()"
+                    class="w-full py-3 flex items-center justify-center gap-2 glass rounded-2xl text-sm font-bold text-indigo-400 border border-indigo-500/30 active:scale-95 transition-all mb-2"
+                >
+                    <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <path d="M15 18l-6-6 6-6" />
+                    </svg>
                     Volver a pedir
                 </button>
-                <p class="text-center text-gray-500 text-sm py-10" id="historyLoader">Cargando tu historial...</p>
+                <p
+                    class="text-center text-gray-500 text-sm py-10"
+                    id="historyLoader"
+                >
+                    Cargando tu historial...
+                </p>
             </div>
             <div id="cartBar" class="premium-checkout glass border-white/10">
                 <div class="flex items-center justify-between gap-4">
                     <div class="flex-1 text-left overflow-hidden">
-                        <p class="text-[9px] text-gray-400 uppercase font-black tracking-tighter">Seleccionados</p>
+                        <p
+                            class="text-[9px] text-gray-400 uppercase font-black tracking-tighter"
+                        >
+                            Seleccionados
+                        </p>
                         <div id="cartSummaryContainer" class="no-scrollbar">
-                            <p class="text-xs font-bold text-white tracking-tight leading-tight" id="cartSummary">Ninguno</p>
+                            <p
+                                class="text-xs font-bold text-white tracking-tight leading-tight"
+                                id="cartSummary"
+                            >
+                                Ninguno
+                            </p>
                         </div>
                     </div>
-                    <button id="checkoutBtn" onclick="openWaiterOverlay()" class="px-10 py-4 brand-gradient rounded-2xl font-bold text-sm shadow-xl active:scale-95 transition-all duration-200">RESERVAR</button>
+                    <button
+                        id="checkoutBtn"
+                        onclick="openWaiterOverlay()"
+                        class="px-10 py-4 brand-gradient rounded-2xl font-bold text-sm shadow-xl active:scale-95 transition-all duration-200"
+                    >
+                        RESERVAR
+                    </button>
                 </div>
             </div>
         </div>
 
         <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
         <script>
-const supabaseUrl = 'https://vxtefnajeqwwditdwwcs.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4dGVmbmFqZXF3d2RpdGR3d2NzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg0Mzc5MjEsImV4cCI6MjA4NDAxMzkyMX0.HFURBIenpBqaqkiF-CGsdBoTTqhdqFznDU8ntITnIWY';
-let supabaseClient;
-try {
-    supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
-} catch (e) {
-    console.warn('Supabase no disponible:', e);
-}
-
-const ADMIN_WHATSAPP = '59163151497';
-let currentUser = { id: null, nombre: '' };
-let selectedItems = new Map();
-let allProducts = [];
-let selectedWaiter = null;
-
-async function getUserCredential(usuarioId) {
-    if (!supabaseClient) return null;
-    const { data, error } = await supabaseClient.from('credenciales_biometricas').select('*').eq('usuario_id', usuarioId).single();
-    if (error) return null;
-    return data;
-}
-
-const USERS = [
-    { id: 1, name: "Luis Jeri", initial: "LJ" },
-    { id: 2, name: "Leo Peter", initial: "LP" },
-    { id: 3, name: "Horacio Arenas", initial: "HA" },
-    { id: 4, name: "Diego Cardenas", initial: "DC" },
-    { id: 5, name: "Chris", initial: "CH" },
-    { id: 6, name: "Tere", initial: "TR" },
-    { id: 7, name: "Angie", initial: "AZ" }
-];
-
-const WAITERS = [
-    { id: 1, name: "William", initial: "W" },
-    { id: 2, name: "Angelica", initial: "A" },
-    { id: 3, name: "Gabriel", initial: "G" },
-    { id: 4, name: "Joel", initial: "J" }
-];
-
-const BARS = [
-    { id: 1, name: "Principal" },
-    { id: 2, name: "Cholet" }
-];
-
-let selectedBar = null;
-
-async function loadProducts() {
-    try {
-        if (!supabaseClient) { renderProducts(); return; }
-        const { data, error } = await supabaseClient.from('productos').select('*');
-        if (error) throw error;
-        allProducts = data;
-        renderProducts();
-    } catch (err) {
-        console.error('Error loading products:', err);
-        renderProducts();
-    }
-}
-
-function renderBars() {
-    const grid = document.getElementById('barGrid');
-    grid.innerHTML = BARS.map(b => `
-        <div class="waiter-card ${selectedBar?.id === b.id ? 'selected highlight-bar' : ''}" onclick="selectBar(${b.id})">
-            <div class="flex-1"><p class="text-sm font-bold text-white">${b.name}</p></div>
-            ${selectedBar?.id === b.id ? '<span class="text-green-400 font-bold">✔ Seleccionada</span>' : ''}
-        </div>
-    `).join('');
-}
-
-function selectBar(id) {
-    selectedBar = BARS.find(b => b.id === id);
-    renderBars();
-    checkConfirmButton();
-}
-
-function selectWaiter(id) {
-    selectedWaiter = WAITERS.find(w => w.id === id);
-    renderWaiters();
-    const barSection = document.getElementById('barSection');
-    barSection.classList.remove('hidden');
-    barSection.classList.add('opacity-0', 'translate-y-3');
-    barSection.offsetHeight;
-    barSection.classList.remove('opacity-0', 'translate-y-3');
-    if (selectedWaiter && selectedBar) {
-        document.getElementById('finalConfirmBtn').disabled = false;
-    }
-    if (window.navigator.vibrate) window.navigator.vibrate(10);
-}
-
-function toggleNotaInput() {
-    const box = document.getElementById('notaInputBox');
-    if (box.classList.contains('hidden')) {
-        box.classList.remove('hidden');
-        box.classList.add('opacity-0', 'translate-y-2');
-        box.offsetHeight;
-        box.classList.remove('opacity-0', 'translate-y-2');
-    } else {
-        box.classList.add('opacity-0', 'translate-y-2');
-        setTimeout(() => { box.classList.add('hidden'); }, 300);
-    }
-}
-
-function checkConfirmButton() {
-    const btn = document.getElementById('finalConfirmBtn');
-    btn.disabled = !(selectedBar && selectedWaiter);
-}
-
-function showErrorToast(message) {
-    const toast = document.getElementById('errorToast');
-    const text = document.getElementById('errorToastMessage');
-    text.textContent = message;
-    toast.classList.add('active');
-    if (window.navigator.vibrate) window.navigator.vibrate([20, 40, 20]);
-    setTimeout(() => { toast.classList.remove('active'); }, 3000);
-}
-
-function getDeviceId() {
-    let id = localStorage.getItem('device_id');
-    if (!id) { id = crypto.randomUUID(); localStorage.setItem('device_id', id); }
-    return id;
-}
-
-async function getDeviceUser(deviceId) {
-    if (!supabaseClient) return null;
-    const { data, error } = await supabaseClient.from('usuarios_dispositivos').select('*').eq('dispositivo_id', deviceId).single();
-    if (error) return null;
-    return data;
-}
-
-function getDeviceInfo() {
-    const ua = navigator.userAgent;
-    let brand = "Desconocido", model = "Desconocido";
-    if (/iPhone/.test(ua)) { brand = "Apple"; model = "iPhone"; }
-    else if (/iPad/.test(ua)) { brand = "Apple"; model = "iPad"; }
-    else if (/Android/.test(ua)) {
-        brand = "Android";
-        const match = ua.match(/Android.; (.) Build/);
-        if (match && match[1]) model = match[1].trim();
-    }
-    return { brand, model };
-}
-
-async function registerDeviceForUser(deviceId, userId, userName) {
-    if (!supabaseClient) return;
-    const { brand, model } = getDeviceInfo();
-    try {
-        await supabaseClient.from('usuarios_dispositivos').upsert({
-            usuario_id: userId, usuario_nombre: userName, dispositivo_id: deviceId,
-            marca: brand, modelo: model, ultimo_acceso: new Date().toISOString()
-        }, { onConflict: ['dispositivo_id'] });
-    } catch (err) { console.error('Error registrando dispositivo:', err); }
-}
-
-async function loginUser(userId, userName) {
-    const overlay = document.getElementById('authOverlay');
-    const authName = document.getElementById('authUserName');
-    const deviceId = getDeviceId();
-    const registeredUser = await getDeviceUser(deviceId);
-
-    if (registeredUser && registeredUser.usuario_id !== userId) {
-        showErrorToast(`${registeredUser.usuario_nombre}, tú no eres ${userName}`);
-        return;
-    }
-
-    authName.textContent = `Hola, ${userName}. Autentícate con Face ID`;
-    overlay.classList.add('active');
-    await new Promise(r => setTimeout(r, 1200));
-
-    if (!window.PublicKeyCredential) {
-        completeLogin(userId, userName);
-        return;
-    }
-
-    try {
-        const storedCredential = await getUserCredential(userId);
-        let credential;
-
-        if (storedCredential) {
-            const challenge = new Uint8Array(32);
-            window.crypto.getRandomValues(challenge);
-            await navigator.credentials.get({
-                publicKey: {
-                    challenge,
-                    allowCredentials: [{ id: Uint8Array.from(atob(storedCredential.credential_id), c => c.charCodeAt(0)), type: "public-key" }],
-                    userVerification: "required",
-                    timeout: 60000
-                }
-            });
-        } else {
-            const challenge = new Uint8Array(32);
-            window.crypto.getRandomValues(challenge);
-            credential = await navigator.credentials.create({
-                publicKey: {
-                    challenge,
-                    rp: { name: "Pacha Sunset" },
-                    user: { id: new TextEncoder().encode(userId.toString()), name: userName, displayName: userName },
-                    pubKeyCredParams: [{ type: "public-key", alg: -7 }],
-                    authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required" },
-                    timeout: 60000,
-                    attestation: "direct"
-                }
-            });
-            if (supabaseClient) {
-                await supabaseClient.from('credenciales_biometricas').insert({
-                    usuario_id: userId,
-                    credential_id: btoa(String.fromCharCode(...new Uint8Array(credential.rawId))),
-                    public_key: JSON.stringify(credential.response)
-                });
+            const supabaseUrl = "https://vxtefnajeqwwditdwwcs.supabase.co";
+            const supabaseKey =
+                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4dGVmbmFqZXF3d2RpdGR3d2NzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg0Mzc5MjEsImV4cCI6MjA4NDAxMzkyMX0.HFURBIenpBqaqkiF-CGsdBoTTqhdqFznDU8ntITnIWY";
+            let supabaseClient;
+            try {
+                supabaseClient = supabase.createClient(
+                    supabaseUrl,
+                    supabaseKey,
+                );
+            } catch (e) {
+                console.warn("Supabase no disponible:", e);
             }
-        }
 
-        await registerDeviceForUser(deviceId, userId, userName);
-        completeLogin(userId, userName);
-    } catch (err) {
-        console.error('Error biométrico:', err);
-        overlay.classList.remove('active');
-        showErrorToast(`Verificación biométrica fallida o cancelada`);
-    }
-}
+            const ADMIN_WHATSAPP = "59163151497";
+            let currentUser = { id: null, nombre: "" };
+            let selectedItems = new Map();
+            let allProducts = [];
+            let selectedWaiter = null;
 
-function completeLogin(userId, userName) {
-    const overlay = document.getElementById('authOverlay');
-    overlay.classList.remove('active');
-    currentUser = { id: userId, nombre: userName };
-    document.getElementById('currentUserName').textContent = `Hola, ${userName}`;
-    loadProducts();
-    showProductsView();
-}
+            async function getUserCredential(usuarioId) {
+                if (!supabaseClient) return null;
+                const { data, error } = await supabaseClient
+                    .from("credenciales_biometricas")
+                    .select("*")
+                    .eq("usuario_id", usuarioId)
+                    .single();
+                if (error) return null;
+                return data;
+            }
 
-function showProductsView() {
-    document.getElementById('usersView').classList.add('opacity-0', 'scale-95');
-    setTimeout(() => {
-        document.getElementById('usersView').classList.add('view-hidden');
-        document.getElementById('productsView').classList.remove('view-hidden');
-        showProductsContent();
-    }, 300);
-}
+            const USERS = [
+                { id: 1, name: "Luis Jeri", initial: "LJ" },
+                { id: 2, name: "Leo Peter", initial: "LP" },
+                { id: 3, name: "Horacio Arenas", initial: "HA" },
+                { id: 4, name: "Diego Cardenas", initial: "DC" },
+                { id: 5, name: "Chris", initial: "CH" },
+                { id: 6, name: "Tere", initial: "TR" },
+                { id: 7, name: "Angie", initial: "AZ" },
+            ];
 
-function handleBack() {
-    const historyVisible = !document.getElementById('historyContent').classList.contains('view-hidden');
-    if (historyVisible) {
-        showProductsContent();
-    } else {
-        showUsersView();
-    }
-}
+            const WAITERS = [
+                { id: 1, name: "William", initial: "W" },
+                { id: 2, name: "Angelica", initial: "A" },
+                { id: 3, name: "Gabriel", initial: "G" },
+                { id: 4, name: "Joel", initial: "J" },
+            ];
 
-function showUsersView() {
-    document.getElementById('productsView').classList.add('view-hidden');
-    document.getElementById('usersView').classList.remove('view-hidden');
-    setTimeout(() => {
-        document.getElementById('usersView').classList.remove('opacity-0', 'scale-95');
-        selectedItems.clear();
-        updateCart();
-    }, 50);
-}
+            const BARS = [
+                { id: 1, name: "Principal" },
+                { id: 2, name: "Cholet" },
+            ];
 
-function showProductsContent() {
-    document.getElementById('productsContent').classList.remove('view-hidden');
-    document.getElementById('historyContent').classList.add('view-hidden');
-    document.getElementById('tabProducts').className = "px-5 py-2.5 brand-gradient rounded-full text-xs font-bold whitespace-nowrap shadow-lg shadow-indigo-500/20";
-    document.getElementById('tabHistory').className = "px-5 py-2.5 glass rounded-full text-xs text-gray-300 font-semibold whitespace-nowrap";
-    updateCart();
-}
+            let selectedBar = null;
 
-async function loadUserReservations() {
-    document.getElementById('productsContent').classList.add('view-hidden');
-    document.getElementById('historyContent').classList.remove('view-hidden');
-    document.getElementById('tabHistory').className = "px-5 py-2.5 brand-gradient rounded-full text-xs font-bold whitespace-nowrap shadow-lg shadow-indigo-500/20";
-    document.getElementById('tabProducts').className = "px-5 py-2.5 glass rounded-full text-xs text-gray-300 font-semibold whitespace-nowrap";
-    document.getElementById('cartBar').classList.remove('active');
-    const historyEl = document.getElementById('historyContent');
-    historyEl.innerHTML = '<p class="text-center text-gray-500 text-sm py-10">Buscando tus reservas...</p>';
-    try {
-        if (!supabaseClient) throw new Error('Sin conexión');
-        let query = supabaseClient.from('reservas').select('*').order('fecha', { ascending: false });
-        if (currentUser.nombre !== 'Angie') query = query.eq('usuario_nombre', currentUser.nombre);
-        const { data, error } = await query;
-        if (error) throw error;
-        if (data.length === 0) {
-            historyEl.innerHTML = '<div class="text-center py-20"><div class="text-4xl mb-4">🥂</div><p class="text-gray-400">Aún no tienes reservas registradas.</p></div>';
-            return;
-        }
-        historyEl.innerHTML = data.map((res, index) => {
-            const date = new Date(res.fecha);
-            const boliviaDate = date.toLocaleString('es-BO', { timeZone: 'America/La_Paz', day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-            const productsList = res.productos.map(p => `
+            async function loadProducts() {
+                try {
+                    if (!supabaseClient) {
+                        renderProducts();
+                        return;
+                    }
+                    const { data, error } = await supabaseClient
+                        .from("productos")
+                        .select("*");
+                    if (error) throw error;
+                    allProducts = data;
+                    renderProducts();
+                } catch (err) {
+                    console.error("Error loading products:", err);
+                    renderProducts();
+                }
+            }
+            function abrirCalendarioPDF() {
+                const hoy = new Date().toISOString().split("T")[0];
+                document.getElementById("pdfFechaInput").value = hoy;
+                document.getElementById("pdfCalendarioOverlay").classList.add("active");
+                setTimeout(function() {
+                    document.getElementById("pdfFechaInput").showPicker && document.getElementById("pdfFechaInput").showPicker();
+                }, 300);
+            }
+
+            function cerrarCalendarioPDF() {
+                document.getElementById("pdfCalendarioOverlay").classList.remove("active");
+            }
+
+            async function confirmarDescargaPDF() {
+                const fechaVal = document.getElementById("pdfFechaInput").value;
+                if (!fechaVal) { showErrorToast("Selecciona una fecha"); return; }
+                cerrarCalendarioPDF();
+                await generarPDF(fechaVal);
+            }
+
+            async function generarPDF(fechaFiltro) {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF({ orientation: "landscape" });
+
+                try {
+                    let query = supabaseClient
+                        .from("reservas")
+                        .select("*")
+                        .order("fecha", { ascending: true });
+
+                    if (fechaFiltro) {
+                        const inicio = fechaFiltro + "T00:00:00";
+                        const fin = fechaFiltro + "T23:59:59";
+                        query = query.gte("fecha", inicio).lte("fecha", fin);
+                    }
+
+                    const { data, error } = await query;
+                    if (error) throw error;
+
+                    // Título y fecha
+                    const fechaLeg = fechaFiltro
+                        ? new Date(fechaFiltro + "T12:00:00").toLocaleDateString("es-BO", { weekday: "long", year: "numeric", month: "long", day: "numeric" })
+                        : "Todas las fechas";
+
+                    doc.setFontSize(18);
+                    doc.setFont("helvetica", "bold");
+                    doc.text("PACHA SUNSET - Reporte de Pedidos", 14, 16);
+                    doc.setFontSize(12);
+                    doc.setFont("helvetica", "normal");
+                    doc.setTextColor(100);
+                    doc.text("Fecha: " + fechaLeg, 14, 24);
+                    doc.setTextColor(0);
+
+                    if (!data || data.length === 0) {
+                        doc.setFontSize(13);
+                        doc.text("No hay pedidos para esta fecha.", 14, 40);
+                        doc.save("pedidos_" + (fechaFiltro || "todos") + ".pdf");
+                        return;
+                    }
+
+                    let rows = [];
+                    let totalGeneral = 0;
+
+                    data.forEach(function(res) {
+                        const fecha = new Date(res.fecha);
+                        const hora = fecha.toLocaleTimeString("es-BO", { hour: "2-digit", minute: "2-digit" });
+                        res.productos.forEach(function(p) {
+                            const subtotal = p.cantidad * p.precio;
+                            totalGeneral += subtotal;
+                            rows.push([
+                                res.usuario_nombre,
+                                res.mesero || "—",
+                                hora,
+                                p.nombre,
+                                p.cantidad,
+                                "Bs " + parseFloat(p.precio).toFixed(2),
+                                "Bs " + parseFloat(subtotal).toFixed(2),
+                            ]);
+                        });
+                    });
+                    doc.autoTable({
+                        head: [["Socio", "Mesero", "Hora", "Producto", "Cant.", "Precio", "Total"]],
+                        body: rows,
+                        startY: 30,
+                        showFoot: "lastPage",
+                        styles: {
+                            fontSize: 11,
+                            cellPadding: 4,
+                            valign: "middle",
+                            fontStyle: "bold",
+                        },
+                        headStyles: {
+                            fillColor: [102, 126, 234],
+                            fontSize: 12,
+                            fontStyle: "bold",
+                            halign: "center",
+                        },
+                        bodyStyles: {
+                            fontStyle: "bold",
+                        },
+                        columnStyles: {
+                            0: { cellWidth: 38 },
+                            1: { cellWidth: 33 },
+                            2: { cellWidth: 22, halign: "center" },
+                            3: { cellWidth: 55 },
+                            4: { cellWidth: 16, halign: "center" },
+                            5: { cellWidth: 26, halign: "right" },
+                            6: { cellWidth: 26, halign: "right" },
+                        },
+                        alternateRowStyles: { fillColor: [245, 245, 255] },
+                        foot: [["", "", "", "", "", "TOTAL GENERAL:", "Bs " + totalGeneral.toFixed(2)]],
+                        footStyles: {
+                            fillColor: [40, 40, 40],
+                            textColor: [255, 255, 255],
+                            fontStyle: "bold",
+                            fontSize: 13,
+                        },
+                    });
+
+                    doc.save("pedidos_" + (fechaFiltro || "todos") + ".pdf");
+                } catch (err) {
+                    console.error("Error PDF:", err);
+                    showErrorToast("Error al generar el PDF");
+                }
+            }
+            function renderBars() {
+                const grid = document.getElementById("barGrid");
+                grid.innerHTML = BARS.map(
+                    (b) => `
+        <div class="waiter-card ${selectedBar?.id === b.id ? "selected highlight-bar" : ""}" onclick="selectBar(${b.id})">
+            <div class="flex-1"><p class="text-sm font-bold text-white">${b.name}</p></div>
+            ${selectedBar?.id === b.id ? '<span class="text-green-400 font-bold">✔ Seleccionada</span>' : ""}
+        </div>
+    `,
+                ).join("");
+            }
+
+            function selectBar(id) {
+                selectedBar = BARS.find((b) => b.id === id);
+                renderBars();
+                checkConfirmButton();
+            }
+
+            function selectWaiter(id) {
+                selectedWaiter = WAITERS.find((w) => w.id === id);
+                renderWaiters();
+                checkConfirmButton();
+                if (window.navigator.vibrate) window.navigator.vibrate(10);
+            }
+
+            function toggleNotaInput() {
+                const box = document.getElementById("notaInputBox");
+                if (box.classList.contains("hidden")) {
+                    box.classList.remove("hidden");
+                    box.classList.add("opacity-0", "translate-y-2");
+                    box.offsetHeight;
+                    box.classList.remove("opacity-0", "translate-y-2");
+                } else {
+                    box.classList.add("opacity-0", "translate-y-2");
+                    setTimeout(() => {
+                        box.classList.add("hidden");
+                    }, 300);
+                }
+            }
+
+            function checkConfirmButton() {
+                const btn = document.getElementById("finalConfirmBtn");
+                btn.disabled = !selectedBar;
+            }
+
+            function showErrorToast(message) {
+                const toast = document.getElementById("errorToast");
+                const text = document.getElementById("errorToastMessage");
+                text.textContent = message;
+                toast.classList.add("active");
+                if (window.navigator.vibrate)
+                    window.navigator.vibrate([20, 40, 20]);
+                setTimeout(() => {
+                    toast.classList.remove("active");
+                }, 3000);
+            }
+
+            function getDeviceId() {
+                let id = localStorage.getItem("device_id");
+                if (!id) {
+                    id = crypto.randomUUID();
+                    localStorage.setItem("device_id", id);
+                }
+                return id;
+            }
+
+            async function getDeviceUser(deviceId) {
+                if (!supabaseClient) return null;
+                const { data, error } = await supabaseClient
+                    .from("usuarios_dispositivos")
+                    .select("*")
+                    .eq("dispositivo_id", deviceId)
+                    .single();
+                if (error) return null;
+                return data;
+            }
+
+            function getDeviceInfo() {
+                const ua = navigator.userAgent;
+                let brand = "Desconocido",
+                    model = "Desconocido";
+                if (/iPhone/.test(ua)) {
+                    brand = "Apple";
+                    model = "iPhone";
+                } else if (/iPad/.test(ua)) {
+                    brand = "Apple";
+                    model = "iPad";
+                } else if (/Android/.test(ua)) {
+                    brand = "Android";
+                    const match = ua.match(/Android.; (.) Build/);
+                    if (match && match[1]) model = match[1].trim();
+                }
+                return { brand, model };
+            }
+
+            async function registerDeviceForUser(deviceId, userId, userName) {
+                if (!supabaseClient) return;
+                const { brand, model } = getDeviceInfo();
+                try {
+                    await supabaseClient.from("usuarios_dispositivos").upsert(
+                        {
+                            usuario_id: userId,
+                            usuario_nombre: userName,
+                            dispositivo_id: deviceId,
+                            marca: brand,
+                            modelo: model,
+                            ultimo_acceso: new Date().toISOString(),
+                        },
+                        { onConflict: ["dispositivo_id"] },
+                    );
+                } catch (err) {
+                    console.error("Error registrando dispositivo:", err);
+                }
+            }
+
+            async function loginUser(userId, userName) {
+                const overlay = document.getElementById("authOverlay");
+                const authName = document.getElementById("authUserName");
+                const deviceId = getDeviceId();
+                const registeredUser = await getDeviceUser(deviceId);
+
+                if (registeredUser && registeredUser.usuario_id !== userId) {
+                    showErrorToast(
+                        `${registeredUser.usuario_nombre}, tú no eres ${userName}`,
+                    );
+                    return;
+                }
+
+                authName.textContent = `Hola, ${userName}. Autentícate con Face ID`;
+                overlay.classList.add("active");
+                await new Promise((r) => setTimeout(r, 1200));
+
+                if (!window.PublicKeyCredential) {
+                    completeLogin(userId, userName);
+                    return;
+                }
+
+                try {
+                    const storedCredential = await getUserCredential(userId);
+                    let credential;
+
+                    if (storedCredential) {
+                        const challenge = new Uint8Array(32);
+                        window.crypto.getRandomValues(challenge);
+                        await navigator.credentials.get({
+                            publicKey: {
+                                challenge,
+                                allowCredentials: [
+                                    {
+                                        id: Uint8Array.from(
+                                            atob(
+                                                storedCredential.credential_id,
+                                            ),
+                                            (c) => c.charCodeAt(0),
+                                        ),
+                                        type: "public-key",
+                                    },
+                                ],
+                                userVerification: "required",
+                                timeout: 60000,
+                            },
+                        });
+                    } else {
+                        const challenge = new Uint8Array(32);
+                        window.crypto.getRandomValues(challenge);
+                        credential = await navigator.credentials.create({
+                            publicKey: {
+                                challenge,
+                                rp: { name: "Pacha Sunset" },
+                                user: {
+                                    id: new TextEncoder().encode(
+                                        userId.toString(),
+                                    ),
+                                    name: userName,
+                                    displayName: userName,
+                                },
+                                pubKeyCredParams: [
+                                    { type: "public-key", alg: -7 },
+                                ],
+                                authenticatorSelection: {
+                                    authenticatorAttachment: "platform",
+                                    userVerification: "required",
+                                },
+                                timeout: 60000,
+                                attestation: "direct",
+                            },
+                        });
+                        if (supabaseClient) {
+                            await supabaseClient
+                                .from("credenciales_biometricas")
+                                .insert({
+                                    usuario_id: userId,
+                                    credential_id: btoa(
+                                        String.fromCharCode(
+                                            ...new Uint8Array(credential.rawId),
+                                        ),
+                                    ),
+                                    public_key: JSON.stringify(
+                                        credential.response,
+                                    ),
+                                });
+                        }
+                    }
+
+                    await registerDeviceForUser(deviceId, userId, userName);
+                    completeLogin(userId, userName);
+                } catch (err) {
+                    console.error("Error biométrico:", err);
+                    overlay.classList.remove("active");
+                    showErrorToast(
+                        `Verificación biométrica fallida o cancelada`,
+                    );
+                }
+            }
+
+            async function completeLogin(userId, userName) {
+                const overlay = document.getElementById("authOverlay");
+                overlay.classList.remove("active");
+                currentUser = { id: userId, nombre: userName, saldo: 0 };
+                if (supabaseClient) {
+                    const { data } = await supabaseClient
+                        .from("usuarios_dispositivos")
+                        .select("saldo")
+                        .eq("usuario_id", userId)
+                        .single();
+                    if (data && data.saldo != null)
+                        currentUser.saldo = parseFloat(data.saldo);
+                }
+                document.getElementById("currentUserName").textContent =
+                    `Hola, ${userName}`;
+                updateSaldoDisplay();
+                loadProducts();
+                showProductsView();
+                sessionStorage.setItem("sociosUser", JSON.stringify({ id: userId, nombre: userName }));
+            }
+
+            function updateSaldoDisplay() {
+                const el = document.getElementById("saldoAmount");
+                if (el)
+                    el.textContent = `$${parseFloat(currentUser.saldo || 0).toFixed(2)}`;
+            }
+
+            function showProductsView() {
+                document
+                    .getElementById("usersView")
+                    .classList.add("opacity-0", "scale-95");
+                setTimeout(() => {
+                    document
+                        .getElementById("usersView")
+                        .classList.add("view-hidden");
+                    document
+                        .getElementById("productsView")
+                        .classList.remove("view-hidden");
+                    showProductsContent();
+                }, 300);
+            }
+
+            function handleBack() {
+                const historyVisible = !document
+                    .getElementById("historyContent")
+                    .classList.contains("view-hidden");
+                if (historyVisible) {
+                    showProductsContent();
+                } else {
+                    showUsersView();
+                }
+            }
+
+            function showUsersView() {
+                document
+                    .getElementById("productsView")
+                    .classList.add("view-hidden");
+                document
+                    .getElementById("usersView")
+                    .classList.remove("view-hidden");
+                setTimeout(() => {
+                    document
+                        .getElementById("usersView")
+                        .classList.remove("opacity-0", "scale-95");
+                    selectedItems.clear();
+                    updateCart();
+                }, 50);
+            }
+
+            function showProductsContent() {
+                document
+                    .getElementById("productsContent")
+                    .classList.remove("view-hidden");
+                document
+                    .getElementById("historyContent")
+                    .classList.add("view-hidden");
+                document.getElementById("tabProducts").className =
+                    "px-3 py-2 brand-gradient rounded-full text-xs font-bold whitespace-nowrap shadow-lg shadow-indigo-500/20 flex-shrink-0";
+                document.getElementById("tabHistory").className =
+                    "px-3 py-2 glass rounded-full text-xs text-gray-300 font-semibold whitespace-nowrap flex-shrink-0";
+                const sb = document.getElementById("searchBar");
+                if (sb) sb.style.display = "";
+                updateCart();
+            }
+
+            async function loadUserReservations() {
+                document
+                    .getElementById("productsContent")
+                    .classList.add("view-hidden");
+                document
+                    .getElementById("historyContent")
+                    .classList.remove("view-hidden");
+                document.getElementById("tabHistory").className =
+                    "px-3 py-2 brand-gradient rounded-full text-xs font-bold whitespace-nowrap shadow-lg shadow-indigo-500/20 flex-shrink-0";
+                document.getElementById("tabProducts").className =
+                    "px-3 py-2 glass rounded-full text-xs text-gray-300 font-semibold whitespace-nowrap flex-shrink-0";
+                document.getElementById("cartBar").classList.remove("active");
+                const sb = document.getElementById("searchBar");
+                if (sb) sb.style.display = "none";
+                const historyEl = document.getElementById("historyContent");
+                historyEl.innerHTML =
+                    '<p class="text-center text-gray-500 text-sm py-10">Buscando tus reservas...</p>';
+                try {
+                    if (!supabaseClient) throw new Error("Sin conexión");
+                    let query = supabaseClient
+                        .from("reservas")
+                        .select("*")
+                        .order("fecha", { ascending: false });
+                    if (currentUser.nombre !== "Angie")
+                        query = query.eq("usuario_nombre", currentUser.nombre);
+                    const { data, error } = await query;
+                    if (error) throw error;
+                    if (data.length === 0) {
+                        historyEl.innerHTML =
+                            '<div class="text-center py-20"><div class="text-4xl mb-4">🥂</div><p class="text-gray-400">Aún no tienes reservas registradas.</p></div>';
+                        return;
+                    }
+                    historyEl.innerHTML = data
+                        .map((res, index) => {
+                            const fechaStr = res.fecha.replace(' ', 'T');
+                            const [datePart, timePart] = fechaStr.split('T');
+                            const [anio, mes, dia] = datePart.split('-');
+                            const [hora, minuto] = timePart.split(':');
+                            const boliviaDate = `${dia}/${mes}/${anio}, ${hora}:${minuto}`;
+                            const productsList = res.productos
+                                .map(
+                                    (p) => `
                 <div class="flex justify-between items-center py-1 border-b border-white/5 last:border-0">
-                    <span class="text-xs text-gray-300">${p.nombre}${p.cantidad > 1 ? ` <span class="text-indigo-400 font-bold">x${p.cantidad}</span>` : ''}</span>
+                    <span class="text-xs text-gray-300">${p.nombre}${p.cantidad > 1 ? ` <span class="text-indigo-400 font-bold">x${p.cantidad}</span>` : ""}</span>
                     <span class="text-[10px] text-gray-500 font-bold">$${(parseFloat(p.precio) * (p.cantidad || 1)).toFixed(2)}</span>
                 </div>
-            `).join('');
-            return `
+            `,
+                                )
+                                .join("");
+                            return `
                 <div class="glass p-5 rounded-3xl space-y-3 border-white/10">
                     <div class="flex justify-between items-start">
                         <div>
                             <p class="text-[10px] text-indigo-400 uppercase font-black tracking-widest">Reserva #${index + 1}</p>
                             <p class="text-[9px] text-gray-500 font-bold mt-1">SOCIO: ${res.usuario_nombre}</p>
                             <p class="text-xs text-gray-400 font-medium">${boliviaDate}</p>
-                            <p class="text-[9px] text-gray-500 font-bold mt-1">MESERO: ${res.mesero || 'No asignado'}</p>
+                            <p class="text-[9px] text-gray-500 font-bold mt-1">MESERO: ${res.mesero || "No asignado"}</p>
                         </div>
                         <div class="text-right">
                             <p class="text-[9px] text-gray-500 uppercase font-bold">Total</p>
@@ -800,239 +1667,581 @@ async function loadUserReservations() {
                     <div class="bg-black/20 p-3 rounded-2xl">${productsList}</div>
                 </div>
             `;
-        }).join('');
-    } catch (err) {
-        console.error('History error:', err);
-        historyEl.innerHTML = '<p class="text-center text-red-400 py-10">Error al cargar el historial.</p>';
-    }
-}
+                        })
+                        .join("");
+                } catch (err) {
+                    console.error("History error:", err);
+                    historyEl.innerHTML =
+                        '<p class="text-center text-red-400 py-10">Error al cargar el historial.</p>';
+                }
+            }
 
-function renderUsers() {
-    const grid = document.getElementById('usersGrid');
-    grid.innerHTML = USERS.map(user => `
+            function renderUsers() {
+                const grid = document.getElementById("usersGrid");
+                grid.innerHTML = USERS.map(
+                    (user) => `
         <div class="user-card cursor-pointer group" onclick="loginUser(${user.id}, '${user.name}')">
             <div class="w-16 h-16 brand-gradient rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4 shadow-2xl text-white">${user.initial}</div>
             <div class="text-center">
-                <h4 class="text-sm font-bold text-white tracking-tight">${user.name.split(' ')[0]}</h4>
+                <h4 class="text-sm font-bold text-white tracking-tight">${user.name.split(" ")[0]}</h4>
                 <p class="text-[9px] text-gray-500 uppercase font-black tracking-tighter mt-1">Acceso VIP</p>
             </div>
         </div>
-    `).join('');
-}
+    `,
+                ).join("");
+            }
 
-function renderProducts(products = allProducts) {
-    const grid = document.getElementById('productGrid');
-    if (!products || products.length === 0) {
-        grid.innerHTML = `<div class="col-span-full text-center text-gray-400 py-16"><div class="text-3xl mb-3">🍸</div><p class="text-sm">No se encontraron productos</p></div>`;
-        return;
-    }
-    grid.innerHTML = products.map(p => {
-        const qty = selectedItems.get(p.id) || 0;
-        const isSelected = qty > 0;
-        return `
-        <div id="product-${p.id}" class="product-card-pro bg-zinc-900 ${isSelected ? 'selected' : ''}">
+            function renderProducts(products = allProducts) {
+                const grid = document.getElementById("productGrid");
+                if (!products || products.length === 0) {
+                    grid.innerHTML = `<div class="col-span-full text-center text-gray-400 py-16"><div class="text-3xl mb-3">🍸</div><p class="text-sm">No se encontraron productos</p></div>`;
+                    return;
+                }
+                grid.innerHTML = products
+                    .map((p) => {
+                        const qty = selectedItems.get(p.id) || 0;
+                        const isSelected = qty > 0;
+                        return `
+        <div id="product-${p.id}" class="product-card-pro bg-zinc-900 ${isSelected ? "selected" : ""}">
             <div class="selection-indicator" style="width:28px;height:28px;font-size:13px;font-weight:900;">${qty}</div>
             <img src="${p.imagen}" alt="${p.nombre}" loading="lazy" onclick="toggleProduct(${p.id})">
             <div class="absolute bottom-0 left-0 right-0 z-10 p-3">
                 <h3 class="text-xs font-bold truncate text-white uppercase tracking-wider mb-2">${p.nombre}</h3>
-                ${isSelected ? `
+                ${
+                    isSelected
+                        ? `
                 <div class="flex items-center justify-between bg-black/60 backdrop-blur rounded-xl px-2 py-1" onclick="event.stopPropagation()">
                     <button onclick="changeQty(${p.id}, -1)" class="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center text-white font-bold text-lg active:scale-90 transition-transform">−</button>
                     <span class="text-white font-bold text-sm">${qty}</span>
                     <button onclick="changeQty(${p.id}, 1)" class="w-7 h-7 rounded-full brand-gradient flex items-center justify-center text-white font-bold text-lg active:scale-90 transition-transform">+</button>
-                </div>` : `
-                <button onclick="toggleProduct(${p.id})" class="w-full py-1 rounded-xl bg-white/10 text-white text-xs font-bold active:scale-95 transition-transform">Agregar</button>`}
+                </div>`
+                        : `
+                <button onclick="toggleProduct(${p.id})" class="w-full py-1 rounded-xl bg-white/10 text-white text-xs font-bold active:scale-95 transition-transform">Agregar</button>`
+                }
             </div>
         </div>`;
-    }).join('');
-}
+                    })
+                    .join("");
+            }
 
-function filterProducts() {
-    const input = document.getElementById('productSearch');
-    if (!input) return;
-    const query = input.value.toLowerCase().trim();
-    if (query === '') { renderProducts(allProducts); document.body.classList.remove('searching'); return; }
-    renderProducts(allProducts.filter(p => p.nombre.toLowerCase().includes(query)));
-}
+            function filterProducts() {
+                const input = document.getElementById("productSearch");
+                if (!input) return;
+                const query = input.value.toLowerCase().trim();
+                const clearBtn = document.getElementById("searchClear");
+                if (clearBtn) {
+                    if (query.length > 0) clearBtn.classList.add("visible");
+                    else clearBtn.classList.remove("visible");
+                }
+                if (query === "") {
+                    renderProducts(allProducts);
+                    return;
+                }
+                renderProducts(
+                    allProducts.filter((p) =>
+                        p.nombre.toLowerCase().includes(query),
+                    ),
+                );
+            }
 
-function handleSearchFocus() { document.body.classList.add('searching'); }
-function handleSearchBlur() {
-    const input = document.getElementById('productSearch');
-    if (input && input.value.trim() === '') document.body.classList.remove('searching');
-}
+            function clearSearch() {
+                const input = document.getElementById("productSearch");
+                if (input) {
+                    input.value = "";
+                    input.focus();
+                }
+                const clearBtn = document.getElementById("searchClear");
+                if (clearBtn) clearBtn.classList.remove("visible");
+                renderProducts(allProducts);
+            }
 
-function renderWaiters() {
-    const grid = document.getElementById('waiterGrid');
-    grid.innerHTML = WAITERS.map(w => `
-        <div class="waiter-card ${selectedWaiter?.id === w.id ? 'selected' : ''}" onclick="selectWaiter(${w.id})">
+            function enterSearchMode() {
+                document
+                    .getElementById("productsView")
+                    .classList.add("search-mode");
+                document.getElementById("productsView").scrollTop = 0;
+            }
+
+            function exitSearchMode() {
+                document
+                    .getElementById("productsView")
+                    .classList.remove("search-mode");
+                const input = document.getElementById("productSearch");
+                if (input) {
+                    input.value = "";
+                    input.blur();
+                }
+                const clearBtn = document.getElementById("searchClear");
+                if (clearBtn) clearBtn.classList.remove("visible");
+                renderProducts(allProducts);
+            }
+
+            function renderWaiters() {
+                const grid = document.getElementById("waiterGrid");
+                grid.innerHTML = WAITERS.map(
+                    (w) => `
+        <div class="waiter-card ${selectedWaiter?.id === w.id ? "selected" : ""}" onclick="selectWaiter(${w.id})">
             <div class="waiter-avatar">${w.initial}</div>
             <div class="flex-1">
                 <p class="text-sm font-bold text-white">${w.name}</p>
                 <p class="text-[10px] text-gray-400 uppercase tracking-tighter">Disponible para atender</p>
             </div>
-            ${selectedWaiter?.id === w.id ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>' : ''}
+            ${selectedWaiter?.id === w.id ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>' : ""}
         </div>
-    `).join('');
-}
+    `,
+                ).join("");
+            }
 
-function toggleProduct(id) {
-    if (!selectedItems.has(id)) {
-        selectedItems.set(id, 1);
-    } else {
-        selectedItems.delete(id);
-    }
-    renderProductCard(id);
-    updateCart();
-    if (window.navigator.vibrate) window.navigator.vibrate(10);
-}
+            function toggleProduct(id) {
+                if (!selectedItems.has(id)) {
+                    selectedItems.set(id, 1);
+                } else {
+                    selectedItems.delete(id);
+                }
+                renderProductCard(id);
+                updateCart();
+                if (window.navigator.vibrate) window.navigator.vibrate(10);
+            }
 
-function changeQty(id, delta) {
-    const current = selectedItems.get(id) || 0;
-    const next = current + delta;
-    if (next <= 0) {
-        selectedItems.delete(id);
-    } else {
-        selectedItems.set(id, next);
-    }
-    renderProductCard(id);
-    updateCart();
-    if (window.navigator.vibrate) window.navigator.vibrate(10);
-}
+            function changeQty(id, delta) {
+                const current = selectedItems.get(id) || 0;
+                const next = current + delta;
+                if (next <= 0) {
+                    selectedItems.delete(id);
+                } else {
+                    selectedItems.set(id, next);
+                }
+                renderProductCard(id);
+                updateCart();
+                if (window.navigator.vibrate) window.navigator.vibrate(10);
+            }
 
-function renderProductCard(id) {
-    const card = document.getElementById(`product-${id}`);
-    if (!card) return;
-    const p = allProducts.find(prod => prod.id === id);
-    if (!p) return;
-    const qty = selectedItems.get(id) || 0;
-    const isSelected = qty > 0;
-    card.className = `product-card-pro bg-zinc-900 ${isSelected ? 'selected' : ''}`;
-    card.innerHTML = `
-        <div class="selection-indicator" style="width:28px;height:28px;font-size:13px;font-weight:900;">${qty || ''}</div>
+            function renderProductCard(id) {
+                const card = document.getElementById(`product-${id}`);
+                if (!card) return;
+                const p = allProducts.find((prod) => prod.id === id);
+                if (!p) return;
+                const qty = selectedItems.get(id) || 0;
+                const isSelected = qty > 0;
+                card.className = `product-card-pro bg-zinc-900 ${isSelected ? "selected" : ""}`;
+                card.innerHTML = `
+        <div class="selection-indicator" style="width:28px;height:28px;font-size:13px;font-weight:900;">${qty || ""}</div>
         <img src="${p.imagen}" alt="${p.nombre}" loading="lazy" onclick="toggleProduct(${p.id})">
         <div class="absolute bottom-0 left-0 right-0 z-10 p-3">
             <h3 class="text-xs font-bold truncate text-white uppercase tracking-wider mb-2">${p.nombre}</h3>
-            ${isSelected ? `
+            ${
+                isSelected
+                    ? `
             <div class="flex items-center justify-between bg-black/60 backdrop-blur rounded-xl px-2 py-1" onclick="event.stopPropagation()">
                 <button onclick="changeQty(${p.id}, -1)" class="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center text-white font-bold text-lg active:scale-90 transition-transform">−</button>
                 <span class="text-white font-bold text-sm">${qty}</span>
                 <button onclick="changeQty(${p.id}, 1)" class="w-7 h-7 rounded-full brand-gradient flex items-center justify-center text-white font-bold text-lg active:scale-90 transition-transform">+</button>
-            </div>` : `
-            <button onclick="toggleProduct(${p.id})" class="w-full py-1 rounded-xl bg-white/10 text-white text-xs font-bold active:scale-95 transition-transform">Agregar</button>`}
+            </div>`
+                    : `
+            <button onclick="toggleProduct(${p.id})" class="w-full py-1 rounded-xl bg-white/10 text-white text-xs font-bold active:scale-95 transition-transform">Agregar</button>`
+            }
         </div>`;
-}
+            }
 
-function updateCart() {
-    if (document.getElementById('productsContent').classList.contains('view-hidden')) return;
-    const bar = document.getElementById('cartBar');
-    const summaryEl = document.getElementById('cartSummary');
-    if (selectedItems.size > 0) {
-        bar.classList.add('active');
-        const lines = Array.from(selectedItems.entries()).map(([id, qty]) => {
-            const prod = allProducts.find(p => p.id === id);
-            return prod ? (qty > 1 ? `${prod.nombre} x${qty}` : prod.nombre) : null;
-        }).filter(Boolean);
-        summaryEl.textContent = lines.join(', ');
-    } else {
-        bar.classList.remove('active');
-    }
-}
+            function updateCart() {
+                if (
+                    document
+                        .getElementById("productsContent")
+                        .classList.contains("view-hidden")
+                )
+                    return;
+                const bar = document.getElementById("cartBar");
+                const summaryEl = document.getElementById("cartSummary");
+                if (selectedItems.size > 0) {
+                    bar.classList.add("active");
+                    const lines = Array.from(selectedItems.entries())
+                        .map(([id, qty]) => {
+                            const prod = allProducts.find((p) => p.id === id);
+                            return prod
+                                ? qty > 1
+                                    ? `${prod.nombre} x${qty}`
+                                    : prod.nombre
+                                : null;
+                        })
+                        .filter(Boolean);
+                    summaryEl.textContent = lines.join(", ");
+                } else {
+                    bar.classList.remove("active");
+                }
+            }
 
-function openWaiterOverlay() {
-    selectedWaiter = null;
-    selectedBar = null;
-    renderWaiters();
-    renderBars();
-    const notaContainer = document.getElementById('pedidoNotaContainer');
-    if (currentUser.nombre === 'Angie' || currentUser.nombre === 'Tere') {
-        notaContainer.classList.remove('hidden');
-        document.getElementById('notaInputBox').classList.add('hidden');
-    } else {
-        notaContainer.classList.add('hidden');
-    }
-    document.getElementById('finalConfirmBtn').disabled = true;
-    document.getElementById('waiterOverlay').classList.add('active');
-}
+            function openWaiterOverlay() {
+                // Verificar saldo antes de abrir el overlay
+                const total = Array.from(selectedItems.entries()).reduce(
+                    (sum, [id, qty]) => {
+                        const p = allProducts.find((prod) => prod.id === id);
+                        return sum + (p ? parseFloat(p.precio) * qty : 0);
+                    },
+                    0,
+                );
+                if (currentUser.saldo < total) {
+                    showErrorToast(
+                        `💳 Saldo insuficiente. Tu saldo: $${parseFloat(currentUser.saldo).toFixed(2)}`,
+                    );
+                    return;
+                }
+                selectedWaiter = null;
+                selectedBar = null;
+                renderWaiters();
+                renderBars();
+                document
+                    .getElementById("barSection")
+                    .classList.remove("hidden");
+                const notaContainer = document.getElementById(
+                    "pedidoNotaContainer",
+                );
+                if (
+                    currentUser.nombre === "Angie" ||
+                    currentUser.nombre === "Tere"
+                ) {
+                    notaContainer.classList.remove("hidden");
+                    document
+                        .getElementById("notaInputBox")
+                        .classList.add("hidden");
+                } else {
+                    notaContainer.classList.add("hidden");
+                }
+                document.getElementById("finalConfirmBtn").disabled = true;
+                document
+                    .getElementById("waiterOverlay")
+                    .classList.add("active");
+            }
 
-function closeWaiterOverlay() {
-    document.getElementById('waiterOverlay').classList.remove('active');
-}
+            function closeWaiterOverlay() {
+                document
+                    .getElementById("waiterOverlay")
+                    .classList.remove("active");
+            }
 
-async function confirmOrderWithWaiter() {
-    if (!selectedWaiter || !selectedBar) { showErrorToast("Selecciona mesero y barra"); return; }
-    const btn = document.getElementById('finalConfirmBtn');
-    btn.innerHTML = `<svg class="animate-spin h-5 w-5 text-white mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>`;
-    btn.disabled = true;
+            async function confirmOrderWithWaiter() {
+                if (!selectedBar) {
+                    showErrorToast("Selecciona una barra");
+                    return;
+                }
+                const btn = document.getElementById("finalConfirmBtn");
+                btn.innerHTML = `<svg class="animate-spin h-5 w-5 text-white mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>`;
+                btn.disabled = true;
 
-    let pedidoNombre = currentUser.nombre;
-    const notaInput = document.getElementById('pedidoNota');
-    if ((currentUser.nombre === 'Angie' || currentUser.nombre === 'Tere') && notaInput.value.trim() !== '') {
-        pedidoNombre = notaInput.value.trim();
-    }
+                let pedidoNombre = currentUser.nombre;
+                const notaInput = document.getElementById("pedidoNota");
+                if (
+                    (currentUser.nombre === "Angie" ||
+                        currentUser.nombre === "Tere") &&
+                    notaInput.value.trim() !== ""
+                ) {
+                    pedidoNombre = notaInput.value.trim();
+                }
 
-    const productsToOrder = Array.from(selectedItems.entries()).map(([id, qty]) => {
-        const p = allProducts.find(prod => prod.id === id);
-        return { id: p.id, nombre: p.nombre, precio: p.precio, cantidad: qty };
-    });
+                const productsToOrder = Array.from(selectedItems.entries()).map(
+                    ([id, qty]) => {
+                        const p = allProducts.find((prod) => prod.id === id);
+                        return {
+                            id: p.id,
+                            nombre: p.nombre,
+                            precio: p.precio,
+                            cantidad: qty,
+                        };
+                    },
+                );
 
-    const total = productsToOrder.reduce((sum, p) => sum + parseFloat(p.precio) * p.cantidad, 0);
-    const now = new Date();
-    const boliviaTimeStr = now.toLocaleString('en-US', { timeZone: 'America/La_Paz' });
-    const boliviaTime = new Date(boliviaTimeStr);
-    const timeFormatted = boliviaTime.toLocaleTimeString('es-BO', { hour: '2-digit', minute: '2-digit' });
+                const total = productsToOrder.reduce(
+                    (sum, p) => sum + parseFloat(p.precio) * p.cantidad,
+                    0,
+                );
 
-    try {
-        if (supabaseClient) {
-            const { error } = await supabaseClient.from('reservas').insert([{
-                usuario_id: currentUser.id,
-                usuario_nombre: pedidoNombre,
-                productos: productsToOrder,
-                total: total,
-                fecha: boliviaTime.toISOString(),
-                mesero: selectedWaiter.name
-            }]);
-            if (error) throw error;
-        }
+                // Verificar saldo suficiente
+                if (currentUser.saldo < total) {
+                    showErrorToast(
+                        `💳 Saldo insuficiente. Tu saldo: $${parseFloat(currentUser.saldo).toFixed(2)}`,
+                    );
+                    btn.innerHTML = "Confirmar";
+                    btn.disabled = false;
+                    return;
+                }
 
-        const telegramMessage = `✨ PACHA SUNSET - NUEVO PEDIDO ✨\n\n👤 SOCIO: ${pedidoNombre}\n🕺 MESERO: ${selectedWaiter.name}\n🕒 HORA: ${timeFormatted}\n\n📦 PRODUCTOS:\n${productsToOrder.map(p => `- ${p.nombre}${p.cantidad > 1 ? ` x${p.cantidad}` : ''}`).join('\n')}\n\n🍹 BARRA: ${selectedBar.name}\n\n💰 TOTAL: $${total}\n\n🚀 Preparar pedido de inmediato.`;
+                const now = new Date();
+                const boliviaISO = now.toLocaleString("sv-SE", { timeZone: "America/La_Paz" }).replace(' ', 'T');
+                const timeFormatted = now.toLocaleTimeString("es-BO", {
+                    timeZone: "America/La_Paz",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                });
 
-        async function sendToTelegram(text) {
-            const TELEGRAM_BOT_TOKEN = '8555944975:AAGXfmtq378bG_ZFenNqgT2uakl0xIRnT2I';
-            const TELEGRAM_CHAT_ID = '-1003742170439';
-            const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
-            try {
-                await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: text, parse_mode: 'Markdown' }) });
-            } catch (err) { console.error('Telegram error:', err); }
-        }
+                try {
+                    if (supabaseClient) {
+                        const { error } = await supabaseClient
+                            .from("reservas")
+                            .insert([
+                                {
+                                    usuario_id: currentUser.id,
+                                    usuario_nombre: pedidoNombre,
+                                    productos: productsToOrder,
+                                    total: total,
+                                    fecha: boliviaISO,
+                                    mesero: selectedWaiter
+                                        ? selectedWaiter.name
+                                        : "Sin asignar",
+                                },
+                            ]);
+                        if (error) throw error;
 
-        closeWaiterOverlay();
-        showSuccess();
-        sendToTelegram(telegramMessage);
-        selectedItems.clear();
-        updateCart();
-        renderProducts();
-        const notaInputEl = document.getElementById('pedidoNota');
-        if (notaInputEl) notaInputEl.value = '';
-    } catch (err) {
-        console.error('Error al guardar la reserva:', err);
-        alert("Error al guardar la reserva.");
-    } finally {
-        btn.innerHTML = "Confirmar";
-        btn.disabled = false;
-    }
-}
+                        // Descontar saldo
+                        const nuevoSaldo =
+                            parseFloat(currentUser.saldo) - total;
+                        currentUser.saldo = nuevoSaldo;
+                        await supabaseClient
+                            .from("usuarios_dispositivos")
+                            .update({ saldo: nuevoSaldo })
+                            .eq("usuario_id", currentUser.id);
+                        updateSaldoDisplay();
+                    }
 
-function showSuccess() {
-    const toast = document.getElementById('successToast');
-    toast.classList.add('active');
-    if (window.navigator.vibrate) window.navigator.vibrate([10, 30, 10]);
-    setTimeout(() => {
-        toast.classList.remove('active');
-        showProductsContent();
-    }, 3000);
-}
+                    const telegramMessage = `✨ PACHA SUNSET - NUEVO PEDIDO ✨\n\n👤 SOCIO: ${pedidoNombre}${selectedWaiter ? `\n🕺 MESERO: ${selectedWaiter.name}` : ""}\n🕒 HORA: ${timeFormatted}\n\n📦 PRODUCTOS:\n${productsToOrder.map((p) => `- ${p.nombre}${p.cantidad > 1 ? ` x${p.cantidad}` : ""}`).join("\n")}\n\n🍹 BARRA: ${selectedBar.name}\n\n💰 TOTAL: $${total}\n\n🚀 Preparar pedido de inmediato.`;
 
-renderUsers();
+                    async function sendToTelegram(text) {
+                        const TELEGRAM_BOT_TOKEN =
+                            "8555944975:AAGXfmtq378bG_ZFenNqgT2uakl0xIRnT2I";
+                        const TELEGRAM_CHAT_ID = "7440698803";
+                        const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+                        try {
+                            await fetch(url, {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({
+                                    chat_id: TELEGRAM_CHAT_ID,
+                                    text: text,
+                                    parse_mode: "Markdown",
+                                }),
+                            });
+                        } catch (err) {
+                            console.error("Telegram error:", err);
+                        }
+                    }
+
+                    closeWaiterOverlay();
+                    showSuccess();
+                    sendToTelegram(telegramMessage);
+                    selectedItems.clear();
+                    updateCart();
+                    renderProducts();
+                    const notaInputEl = document.getElementById("pedidoNota");
+                    if (notaInputEl) notaInputEl.value = "";
+                } catch (err) {
+                    console.error("Error al guardar la reserva:", err);
+                    alert("Error al guardar la reserva.");
+                } finally {
+                    btn.innerHTML = "Confirmar";
+                    btn.disabled = false;
+                }
+            }
+
+            function showSuccess() {
+                const toast = document.getElementById("successToast");
+                toast.classList.add("active");
+                if (window.navigator.vibrate)
+                    window.navigator.vibrate([10, 30, 10]);
+                setTimeout(() => {
+                    toast.classList.remove("active");
+                    showProductsContent();
+                }, 3000);
+            }
+
+            // ── RECARGA FUNCTIONS ──
+            let recargaTimerInterval = null;
+            let recargaTimerSecs = 600;
+
+            function openRecargaOverlay() {
+                const overlay = document.getElementById("recargaOverlay");
+                document.getElementById("recargaGreeting").textContent =
+                    "Hola " + currentUser.nombre + ", ¿quieres recargar dinero?";
+                overlay.classList.add("active");
+                showRecargaStep(1);
+            }
+
+            function closeRecargaOverlay() {
+                document.getElementById("recargaOverlay").classList.remove("active");
+                if (recargaTimerInterval) {
+                    clearInterval(recargaTimerInterval);
+                    recargaTimerInterval = null;
+                }
+                document.getElementById("comprobanteInput").value = "";
+                const area = document.getElementById("uploadArea");
+                area.classList.remove("has-file");
+                document.getElementById("uploadAreaText").textContent = "Toca aquí para seleccionar imagen";
+                sessionStorage.removeItem("recargaState");
+            }
+
+            function showRecargaStep(n) {
+                document.querySelectorAll(".recarga-step").forEach(function(s) {
+                    s.classList.remove("active");
+                });
+                document.getElementById("recargaStep" + n).classList.add("active");
+                if (n === 3) startRecargaTimer(600);
+                if (n === 4) sessionStorage.setItem("recargaState", JSON.stringify({ step: 4, timerStart: null }));
+            }
+
+            function startRecargaTimer(startSecs) {
+                if (recargaTimerInterval) clearInterval(recargaTimerInterval);
+                recargaTimerSecs = (startSecs !== undefined) ? startSecs : 600;
+                sessionStorage.setItem("recargaState", JSON.stringify({ step: 3, timerStart: Date.now() - ((600 - recargaTimerSecs) * 1000) }));
+                updateTimerDisplay();
+                recargaTimerInterval = setInterval(function() {
+                    recargaTimerSecs--;
+                    updateTimerDisplay();
+                    if (recargaTimerSecs <= 0) {
+                        clearInterval(recargaTimerInterval);
+                        recargaTimerInterval = null;
+                        sessionStorage.setItem("recargaState", JSON.stringify({ step: 4, timerStart: null }));
+                        document.querySelectorAll(".recarga-step").forEach(function(s) { s.classList.remove("active"); });
+                        document.getElementById("recargaStep4").classList.add("active");
+                    }
+                }, 1000);
+            }
+
+            function updateTimerDisplay() {
+                const m = Math.floor(recargaTimerSecs / 60);
+                const s = recargaTimerSecs % 60;
+                const el = document.getElementById("timerDisplay");
+                if (el) el.textContent = m + ":" + String(s).padStart(2, "0");
+            }
+
+            function downloadQR() {
+                const link = document.createElement("a");
+                link.href = "/CAMEL_Mesa1_CASCABEL_BEBIDAS.png";
+                link.download = "qr-pago.png";
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                setTimeout(function() { showRecargaStep(3); }, 400);
+            }
+
+            function triggerComprobanteInput() {
+                document.getElementById("comprobanteInput").click();
+            }
+
+            function handleComprobanteFile(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                const area = document.getElementById("uploadArea");
+                area.classList.add("has-file");
+                document.getElementById("uploadAreaText").textContent = "✅ " + file.name;
+                if (window.navigator.vibrate) window.navigator.vibrate(10);
+            }
+
+            async function subirComprobante() {
+                const input = document.getElementById("comprobanteInput");
+                const file = input.files[0];
+                if (!file) {
+                    showErrorToast("Selecciona el comprobante primero");
+                    return;
+                }
+                const btn = document.getElementById("btnSubirComprobante");
+                btn.innerHTML = '<svg class="animate-spin h-5 w-5 text-white mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>';
+                btn.disabled = true;
+                try {
+                    const TELEGRAM_BOT_TOKEN = "8555944975:AAGXfmtq378bG_ZFenNqgT2uakl0xIRnT2I";
+                    const TELEGRAM_CHAT_ID = "7440698803";
+                    const now = new Date();
+                    const fechaStr = now.toLocaleString("es-BO", { timeZone: "America/La_Paz" });
+                    const caption = "💳 PACHA SUNSET - COMPROBANTE DE RECARGA\n\n👤 SOCIO: " + currentUser.nombre + "\n📅 FECHA: " + fechaStr + "\n\n✅ El socio solicita recarga de saldo. Por favor verificar y acreditar.";
+                    const formData = new FormData();
+                    formData.append("chat_id", TELEGRAM_CHAT_ID);
+                    formData.append("photo", file);
+                    formData.append("caption", caption);
+                    await fetch("https://api.telegram.org/bot" + TELEGRAM_BOT_TOKEN + "/sendPhoto", {
+                        method: "POST",
+                        body: formData,
+                    });
+                    if (recargaTimerInterval) {
+                        clearInterval(recargaTimerInterval);
+                        recargaTimerInterval = null;
+                    }
+                    sessionStorage.removeItem("recargaState");
+                    sessionStorage.removeItem("sociosUser");
+                    showRecargaStep(5);
+                    if (window.navigator.vibrate) window.navigator.vibrate([10, 30, 10]);
+                } catch (err) {
+                    console.error("Error enviando comprobante:", err);
+                    showErrorToast("Error al enviar, intenta de nuevo");
+                } finally {
+                    btn.innerHTML = "Subir Comprobante y Recargar";
+                    btn.disabled = false;
+                }
+            }
+
+            renderUsers();
+
+            // ── RESTAURAR SESIÓN AL VOLVER A LA APP ──
+            (async function restoreSession() {
+                try {
+                    const savedUser = sessionStorage.getItem("sociosUser");
+                    const savedRecharge = sessionStorage.getItem("recargaState");
+                    // Solo restaurar si había una recarga en progreso (usuario fue al banco)
+                    if (!savedUser || !savedRecharge) return;
+                    const u = JSON.parse(savedUser);
+                    // Login silencioso sin Face ID
+                    currentUser = { id: u.id, nombre: u.nombre, saldo: 0 };
+                    if (supabaseClient) {
+                        const { data } = await supabaseClient
+                            .from("usuarios_dispositivos")
+                            .select("saldo")
+                            .eq("usuario_id", u.id)
+                            .single();
+                        if (data && data.saldo != null)
+                            currentUser.saldo = parseFloat(data.saldo);
+                    }
+                    document.getElementById("currentUserName").textContent = "Hola, " + u.nombre;
+                    updateSaldoDisplay();
+                    loadProducts();
+                    // Mostrar vista de productos directamente sin animación
+                    document.getElementById("usersView").classList.add("view-hidden");
+                    document.getElementById("productsView").classList.remove("view-hidden");
+                    showProductsContent();
+
+                    // Restaurar overlay de recarga
+                    if (savedRecharge) {
+                        const state = JSON.parse(savedRecharge);
+                        document.getElementById("recargaGreeting").textContent =
+                            "Hola " + u.nombre + ", ¿quieres recargar dinero?";
+                        document.getElementById("recargaOverlay").classList.add("active");
+                        document.querySelectorAll(".recarga-step").forEach(function(s) { s.classList.remove("active"); });
+                        if (state.step === 3 && state.timerStart != null) {
+                            const elapsed = Math.floor((Date.now() - state.timerStart) / 1000);
+                            if (elapsed >= 600) {
+                                document.getElementById("recargaStep4").classList.add("active");
+                                sessionStorage.setItem("recargaState", JSON.stringify({ step: 4, timerStart: null }));
+                            } else {
+                                document.getElementById("recargaStep3").classList.add("active");
+                                if (recargaTimerInterval) clearInterval(recargaTimerInterval);
+                                recargaTimerSecs = 600 - elapsed;
+                                updateTimerDisplay();
+                                recargaTimerInterval = setInterval(function() {
+                                    recargaTimerSecs--;
+                                    updateTimerDisplay();
+                                    if (recargaTimerSecs <= 0) {
+                                        clearInterval(recargaTimerInterval);
+                                        recargaTimerInterval = null;
+                                        sessionStorage.setItem("recargaState", JSON.stringify({ step: 4, timerStart: null }));
+                                        document.querySelectorAll(".recarga-step").forEach(function(s) { s.classList.remove("active"); });
+                                        document.getElementById("recargaStep4").classList.add("active");
+                                    }
+                                }, 1000);
+                            }
+                        } else if (state.step === 4) {
+                            document.getElementById("recargaStep4").classList.add("active");
+                        } else {
+                            document.getElementById("recargaStep1").classList.add("active");
+                        }
+                    }
+                } catch(e) {
+                    console.warn("No se pudo restaurar sesión:", e);
+                }
+            })();
         </script>
     </body>
 </html>
