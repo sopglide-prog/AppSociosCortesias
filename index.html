@@ -477,10 +477,10 @@
             #productsView.search-mode #searchBar {
                 margin-top: 0;
             }
-            #productsView.search-mode header {
-                padding-top: 12px;
-                padding-bottom: 10px;
-            }
+          #productsView.search-mode header {
+              padding-top: calc(env(safe-area-inset-top) + 10px);
+              padding-bottom: 10px;
+          }
 
             #searchCancelBtn {
                 display: none;
