@@ -1144,7 +1144,7 @@
                 { id: 5, name: "Chris", initial: "CH" },
                 { id: 6, name: "Tere", initial: "TR" },
                 { id: 7, name: "Angie", initial: "AZ" },
-                { id: 8, name: "sopa", initial: "sp" },
+                { id: 8, name: "Sopa", initial: "SO" },
             ];
 
             const WAITERS = [
@@ -1433,7 +1433,7 @@
 
                 authName.textContent = `Hola, ${userName}. Autentícate con Face ID`;
                 overlay.classList.add("active");
-                await new Promise((r) => setTimeout(r, 1200));
+                await new Promise((r) => setTimeout(r, 80));
 
                 if (!window.PublicKeyCredential) {
                     completeLogin(userId, userName);
@@ -1899,7 +1899,8 @@
                 );
                 if (
                     currentUser.nombre === "Angie" ||
-                    currentUser.nombre === "Tere"
+                    currentUser.nombre === "Tere" ||
+                    currentUser.nombre === "Sopa"
                 ) {
                     notaContainer.classList.remove("hidden");
                     document
@@ -1933,7 +1934,8 @@
                 const notaInput = document.getElementById("pedidoNota");
                 if (
                     (currentUser.nombre === "Angie" ||
-                        currentUser.nombre === "Tere") &&
+                        currentUser.nombre === "Tere" ||
+                        currentUser.nombre === "Sopa") &&
                     notaInput.value.trim() !== ""
                 ) {
                     pedidoNombre = notaInput.value.trim();
