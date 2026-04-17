@@ -76,9 +76,28 @@
                 position: relative;
                 border-radius: 24px;
                 overflow: hidden;
-                transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                transition: transform 0.15s ease, box-shadow 0.15s ease;
                 aspect-ratio: 0.8;
                 cursor: pointer;
+                -webkit-tap-highlight-color: transparent;
+            }
+            .product-card-pro:active {
+                transform: scale(0.93);
+                box-shadow: 0 0 0 3px rgba(102,126,234,0.6);
+            }
+            .product-card-pro.press-flash::before {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: rgba(255,255,255,0.18);
+                z-index: 20;
+                border-radius: 24px;
+                animation: pressFlash 0.35s ease forwards;
+                pointer-events: none;
+            }
+            @keyframes pressFlash {
+                0% { opacity: 1; }
+                100% { opacity: 0; }
             }
 
             .product-card-pro::after {
@@ -179,28 +198,28 @@
                 border: 1px solid rgba(255, 255, 255, 0.1);
                 border-radius: 30px;
                 padding: 24px;
-                transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+                transition: transform 0.1s ease, border-color 0.1s ease;
                 overflow: hidden;
+                -webkit-tap-highlight-color: transparent;
             }
-
-            .user-card::before {
+            .user-card:active {
+                transform: scale(0.91) !important;
+                border-color: var(--primary) !important;
+            }
+            .user-card.tapped {
+                transform: scale(0.91);
+                border-color: var(--primary);
+                background: rgba(102,126,234,0.18);
+            }
+            .user-card.tapped::after {
                 content: "";
                 position: absolute;
                 inset: 0;
-                background: linear-gradient(
-                    45deg,
-                    transparent,
-                    rgba(102, 126, 234, 0.1),
-                    transparent
-                );
-                transform: translateX(-100%);
-                transition: transform 0.6s ease;
-            }
-
-            .user-card:active {
-                transform: scale(0.96);
-                background: rgba(255, 255, 255, 0.08);
-                border-color: var(--primary);
+                border-radius: 30px;
+                background: rgba(255,255,255,0.22);
+                animation: pressFlash 0.5s ease forwards;
+                pointer-events: none;
+                z-index: 5;
             }
 
             .user-avatar-glow {
@@ -212,17 +231,33 @@
                 border: 1px solid rgba(255, 255, 255, 0.1);
                 border-radius: 20px;
                 padding: 12px 16px;
-                transition: all 0.3s ease;
+                transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.25s ease;
                 cursor: pointer;
                 display: flex;
                 align-items: center;
                 gap: 12px;
+                -webkit-tap-highlight-color: transparent;
+                position: relative;
+                overflow: hidden;
             }
-
+            .waiter-card:active {
+                transform: scale(0.95);
+            }
             .waiter-card.selected {
                 background: var(--primary);
                 border-color: transparent;
-                box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+                box-shadow: 0 8px 20px rgba(102, 126, 234, 0.45);
+                transform: scale(1.02);
+            }
+            .waiter-card.press-pop::after {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: rgba(255,255,255,0.2);
+                border-radius: 20px;
+                animation: pressFlash 0.4s ease forwards;
+                pointer-events: none;
+                z-index: 5;
             }
 
             .waiter-avatar {
@@ -1307,7 +1342,7 @@
                 const grid = document.getElementById("barGrid");
                 grid.innerHTML = BARS.map(
                     (b) => `
-        <div class="waiter-card ${selectedBar?.id === b.id ? "selected highlight-bar" : ""}" onclick="selectBar(${b.id})">
+        <div id="bar-card-${b.id}" class="waiter-card ${selectedBar?.id === b.id ? "selected highlight-bar" : ""}" onclick="selectBar(${b.id})">
             <div class="flex-1"><p class="text-sm font-bold text-white">${b.name}</p></div>
             ${selectedBar?.id === b.id ? '<span class="text-green-400 font-bold">✔ Seleccionada</span>' : ""}
         </div>
@@ -1319,13 +1354,22 @@
                 selectedBar = BARS.find((b) => b.id === id);
                 renderBars();
                 checkConfirmButton();
+                if (window.navigator.vibrate) window.navigator.vibrate(12);
+                setTimeout(() => {
+                    const card = document.getElementById('bar-card-' + id);
+                    if (card) { card.classList.add('press-pop'); setTimeout(() => card.classList.remove('press-pop'), 450); }
+                }, 0);
             }
 
             function selectWaiter(id) {
                 selectedWaiter = WAITERS.find((w) => w.id === id);
                 renderWaiters();
                 checkConfirmButton();
-                if (window.navigator.vibrate) window.navigator.vibrate(10);
+                if (window.navigator.vibrate) window.navigator.vibrate(12);
+                setTimeout(() => {
+                    const card = document.getElementById('waiter-card-' + id);
+                    if (card) { card.classList.add('press-pop'); setTimeout(() => card.classList.remove('press-pop'), 450); }
+                }, 0);
             }
 
             function toggleNotaInput() {
@@ -1419,6 +1463,12 @@
             }
 
             async function loginUser(userId, userName) {
+                const card = document.getElementById('user-card-' + userId);
+                if (card) {
+                    card.classList.add('tapped');
+                    if (window.navigator.vibrate) window.navigator.vibrate(15);
+                    setTimeout(() => card.classList.remove('tapped'), 500);
+                }
                 const overlay = document.getElementById("authOverlay");
                 const authName = document.getElementById("authUserName");
                 const deviceId = getDeviceId();
@@ -1682,7 +1732,7 @@
                 const grid = document.getElementById("usersGrid");
                 grid.innerHTML = USERS.map(
                     (user) => `
-        <div class="user-card cursor-pointer group" onclick="loginUser(${user.id}, '${user.name}')">
+        <div id="user-card-${user.id}" class="user-card cursor-pointer group" onclick="loginUser(${user.id}, '${user.name}')">
             <div class="w-16 h-16 brand-gradient rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4 shadow-2xl text-white">${user.initial}</div>
             <div class="text-center">
                 <h4 class="text-sm font-bold text-white tracking-tight">${user.name.split(" ")[0]}</h4>
@@ -1782,7 +1832,7 @@
                 const grid = document.getElementById("waiterGrid");
                 grid.innerHTML = WAITERS.map(
                     (w) => `
-        <div class="waiter-card ${selectedWaiter?.id === w.id ? "selected" : ""}" onclick="selectWaiter(${w.id})">
+        <div id="waiter-card-${w.id}" class="waiter-card ${selectedWaiter?.id === w.id ? "selected" : ""}" onclick="selectWaiter(${w.id})">
             <div class="waiter-avatar">${w.initial}</div>
             <div class="flex-1">
                 <p class="text-sm font-bold text-white">${w.name}</p>
@@ -1795,14 +1845,18 @@
             }
 
             function toggleProduct(id) {
-                if (!selectedItems.has(id)) {
-                    selectedItems.set(id, 1);
-                } else {
-                    selectedItems.delete(id);
-                }
+                const current = selectedItems.get(id) || 0;
+                selectedItems.set(id, current + 1);
                 renderProductCard(id);
                 updateCart();
-                if (window.navigator.vibrate) window.navigator.vibrate(10);
+                if (window.navigator.vibrate) window.navigator.vibrate(12);
+                const card = document.getElementById('product-' + id);
+                if (card) {
+                    card.classList.remove('press-flash');
+                    void card.offsetWidth;
+                    card.classList.add('press-flash');
+                    setTimeout(() => card.classList.remove('press-flash'), 400);
+                }
             }
 
             function changeQty(id, delta) {
