@@ -608,49 +608,38 @@
                 display: none;
             }
 
-            /* ── CALENDARIO PDF OVERLAY ── */
-            #pdfCalendarioOverlay {
+            /* ── REPORTE SOCIOS OVERLAY ── */
+            #reporteSociosOverlay {
                 position: fixed;
                 inset: 0;
                 z-index: 170;
-                background: rgba(0,0,0,0.85);
-                backdrop-filter: blur(20px);
-                -webkit-backdrop-filter: blur(20px);
+                background: rgba(0,0,0,0.88);
+                backdrop-filter: blur(22px);
+                -webkit-backdrop-filter: blur(22px);
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                padding: 30px 24px;
+                padding: 24px;
                 opacity: 0;
                 pointer-events: none;
                 transition: opacity 0.3s ease;
             }
-            #pdfCalendarioOverlay.active {
-                opacity: 1;
-                pointer-events: auto;
-            }
-            #pdfCalendarioOverlay input[type="date"] {
-                width: 100%;
-                padding: 16px;
-                border-radius: 16px;
-                border: 1px solid rgba(255,255,255,0.15);
-                background: rgba(255,255,255,0.08);
-                color: #fff;
-                font-size: 1.1rem;
-                font-family: "Outfit", sans-serif;
-                outline: none;
-                margin: 20px 0;
-                -webkit-appearance: none;
-                text-align: center;
-            }
-            #pdfCalendarioOverlay input[type="date"]::-webkit-calendar-picker-indicator {
-                filter: invert(1);
-                cursor: pointer;
-                transform: scale(1.4);
+            #reporteSociosOverlay.active { opacity: 1; pointer-events: auto; }
+            .rpt-card {
+                width: 100%; max-width: 370px;
+                background: linear-gradient(145deg,#1a1d2e,#131526);
+                border: 1px solid rgba(102,126,234,0.2);
+                border-radius: 24px;
+                padding: 24px 20px;
+                box-shadow: 0 24px 60px rgba(0,0,0,0.7);
+                max-height: 90vh;
+                overflow-y: auto;
             }
         </style>
     </head>
     <body>
         <div class="bg-glow"></div>
+
 
         <!-- SUCCESS NOTIFICATION -->
         <div id="successToast">
@@ -876,19 +865,40 @@
 
         </div>
 
-        <!-- CALENDARIO PDF OVERLAY -->
-        <div id="pdfCalendarioOverlay">
-            <div style="width:100%;max-width:340px;text-align:center;">
-                <div class="text-4xl mb-3">📅</div>
-                <h3 class="text-xl font-bold mb-1">Selecciona la fecha</h3>
-                <p class="text-gray-400 text-sm mb-1">Se descargará el reporte de pedidos de ese día</p>
-                <input type="date" id="pdfFechaInput" />
-                <div class="flex flex-col gap-3">
-                    <button onclick="confirmarDescargaPDF()" class="w-full py-4 brand-gradient rounded-2xl font-bold text-sm shadow-xl active:scale-95 transition-all flex items-center justify-center gap-2">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
-                        Descargar PDF
+        <!-- REPORTE SOCIOS OVERLAY -->
+        <div id="reporteSociosOverlay">
+            <div class="rpt-card">
+                <div style="text-align:center;margin-bottom:14px;">
+                    <h3 style="font-size:1.05rem;font-weight:800;color:#fff;">📊 Reporte de Socios</h3>
+                    <p style="font-size:0.66rem;color:rgba(255,255,255,0.3);margin-top:3px;letter-spacing:0.02em;">
+                        Luis Jeri · Leo Peter · Horacio Arenas · Diego Cardenas · Chris
+                    </p>
+                </div>
+
+                <!-- Navegación mes -->
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+                    <button onclick="rptCalPrev()" style="background:none;border:none;color:#a5b4fc;font-size:1.7rem;cursor:pointer;padding:0 10px;line-height:1;-webkit-tap-highlight-color:transparent;">‹</button>
+                    <span id="rptCalTitle" style="font-weight:700;color:#fff;font-size:0.9rem;"></span>
+                    <button onclick="rptCalNext()" style="background:none;border:none;color:#a5b4fc;font-size:1.7rem;cursor:pointer;padding:0 10px;line-height:1;-webkit-tap-highlight-color:transparent;">›</button>
+                </div>
+
+                <!-- Grilla del calendario -->
+                <div id="rptCalGrid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:10px;"></div>
+
+                <!-- Contador -->
+                <p id="rptSelCount" style="font-size:0.72rem;color:rgba(255,255,255,0.38);text-align:center;margin-bottom:12px;min-height:1em;"></p>
+
+                <!-- Botones -->
+                <div style="display:flex;flex-direction:column;gap:8px;">
+                    <button id="rptDownloadBtn" onclick="generarPDFSocios()"
+                        style="width:100%;padding:14px;background:linear-gradient(135deg,#667eea,#764ba2);border:none;border-radius:16px;font-weight:800;font-size:0.9rem;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;box-shadow:0 8px 24px rgba(102,126,234,0.35);opacity:0.45;pointer-events:none;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
+                        <span id="rptDownloadLabel">Selecciona días</span>
                     </button>
-                    <button onclick="cerrarCalendarioPDF()" class="text-gray-500 text-sm py-2 active:opacity-60">Cancelar</button>
+                    <button onclick="cerrarReporteSocios()"
+                        style="background:none;border:none;color:rgba(255,255,255,0.28);font-size:0.8rem;padding:6px;cursor:pointer;">
+                        Cancelar
+                    </button>
                 </div>
             </div>
         </div>
@@ -1213,128 +1223,225 @@
                     renderProducts();
                 }
             }
+            // ── REPORTE SOCIOS ────────────────────────────────────────
+            const RPT_TARGET = ["Luis Jeri", "Leo Peter", "Horacio Arenas", "Diego Cardenas", "Chris"];
+            const RPT_MESES = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+            let rptFechas = new Set();
+            let rptCalYear = new Date().getFullYear();
+            let rptCalMonth = new Date().getMonth();
+
             function abrirCalendarioPDF() {
-                const hoy = new Date().toISOString().split("T")[0];
-                document.getElementById("pdfFechaInput").value = hoy;
-                document.getElementById("pdfCalendarioOverlay").classList.add("active");
-                setTimeout(function() {
-                    document.getElementById("pdfFechaInput").showPicker && document.getElementById("pdfFechaInput").showPicker();
-                }, 300);
+                const hoy = new Date();
+                rptCalYear = hoy.getFullYear();
+                rptCalMonth = hoy.getMonth();
+                rptFechas.clear();
+                _renderCalendar();
+                _updateRptBtn();
+                document.getElementById("reporteSociosOverlay").classList.add("active");
             }
 
-            function cerrarCalendarioPDF() {
-                document.getElementById("pdfCalendarioOverlay").classList.remove("active");
+            function cerrarReporteSocios() {
+                document.getElementById("reporteSociosOverlay").classList.remove("active");
             }
 
-            async function confirmarDescargaPDF() {
-                const fechaVal = document.getElementById("pdfFechaInput").value;
-                if (!fechaVal) { showErrorToast("Selecciona una fecha"); return; }
-                cerrarCalendarioPDF();
-                await generarPDF(fechaVal);
+            function rptCalPrev() {
+                rptCalMonth--;
+                if (rptCalMonth < 0) { rptCalMonth = 11; rptCalYear--; }
+                _renderCalendar();
             }
 
-            async function generarPDF(fechaFiltro) {
+            function rptCalNext() {
+                rptCalMonth++;
+                if (rptCalMonth > 11) { rptCalMonth = 0; rptCalYear++; }
+                _renderCalendar();
+            }
+
+            function rptCalToggleDay(ds) {
+                if (rptFechas.has(ds)) rptFechas.delete(ds);
+                else rptFechas.add(ds);
+                _renderCalendar();
+                _updateRptBtn();
+                if (window.navigator.vibrate) window.navigator.vibrate(10);
+            }
+
+            function _renderCalendar() {
+                document.getElementById("rptCalTitle").textContent = RPT_MESES[rptCalMonth] + " " + rptCalYear;
+                const firstDay = new Date(rptCalYear, rptCalMonth, 1).getDay();
+                const total = new Date(rptCalYear, rptCalMonth + 1, 0).getDate();
+                const hds = ["D","L","M","M","J","V","S"];
+                let h = hds.map(function(d) {
+                    return '<div style="text-align:center;font-size:0.62rem;color:rgba(255,255,255,0.25);font-weight:700;padding:3px 0;">' + d + '</div>';
+                }).join("");
+                for (let i = 0; i < firstDay; i++) h += "<div></div>";
+                for (let d = 1; d <= total; d++) {
+                    const mm = String(rptCalMonth + 1).padStart(2, "0");
+                    const dd = String(d).padStart(2, "0");
+                    const ds = rptCalYear + "-" + mm + "-" + dd;
+                    const sel = rptFechas.has(ds);
+                    h += '<div onclick="rptCalToggleDay(\'' + ds + '\')" style="'
+                        + 'text-align:center;padding:7px 2px;border-radius:9px;'
+                        + 'font-size:0.86rem;font-weight:' + (sel ? '800' : '500') + ';'
+                        + 'cursor:pointer;'
+                        + 'background:' + (sel ? 'rgba(102,126,234,0.85)' : 'transparent') + ';'
+                        + 'color:' + (sel ? '#fff' : 'rgba(255,255,255,0.72)') + ';'
+                        + '-webkit-tap-highlight-color:transparent;">' + d + '</div>';
+                }
+                document.getElementById("rptCalGrid").innerHTML = h;
+            }
+
+            function _updateRptBtn() {
+                const n = rptFechas.size;
+                const btn = document.getElementById("rptDownloadBtn");
+                const lbl = document.getElementById("rptDownloadLabel");
+                const cnt = document.getElementById("rptSelCount");
+                if (n === 0) {
+                    lbl.textContent = "Selecciona días";
+                    btn.style.opacity = "0.45";
+                    btn.style.pointerEvents = "none";
+                    cnt.textContent = "";
+                } else {
+                    lbl.textContent = "Descargar PDF (" + n + " día" + (n > 1 ? "s" : "") + ")";
+                    btn.style.opacity = "1";
+                    btn.style.pointerEvents = "auto";
+                    cnt.textContent = n + " día" + (n > 1 ? "s" : "") + " seleccionado" + (n > 1 ? "s" : "");
+                }
+            }
+
+            async function generarPDFSocios() {
+                if (rptFechas.size === 0) { showErrorToast("Agregá al menos una fecha"); return; }
+                cerrarReporteSocios();
+
+                const fechasArr = [...rptFechas].sort();
                 const { jsPDF } = window.jspdf;
-                const doc = new jsPDF({ orientation: "landscape" });
+                const doc = new jsPDF({ orientation: "portrait" });
 
                 try {
-                    let query = supabaseClient
-                        .from("reservas")
-                        .select("*")
-                        .order("fecha", { ascending: true });
-
-                    if (fechaFiltro) {
-                        const inicio = fechaFiltro + "T00:00:00";
-                        const fin = fechaFiltro + "T23:59:59";
-                        query = query.gte("fecha", inicio).lte("fecha", fin);
+                    // Traer datos de todas las fechas seleccionadas
+                    let allData = [];
+                    for (const f of fechasArr) {
+                        const { data, error } = await supabaseClient
+                            .from("reservas")
+                            .select("*")
+                            .gte("fecha", f + "T00:00:00")
+                            .lte("fecha", f + "T23:59:59")
+                            .order("fecha", { ascending: true });
+                        if (!error && data) allData = allData.concat(data);
                     }
 
-                    const { data, error } = await query;
-                    if (error) throw error;
+                    // Filtrar solo los 4 socios target
+                    allData = allData.filter(function(r) { return RPT_TARGET.includes(r.usuario_nombre); });
 
-                    // Título y fecha
-                    const fechaLeg = fechaFiltro
-                        ? new Date(fechaFiltro + "T12:00:00").toLocaleDateString("es-BO", { weekday: "long", year: "numeric", month: "long", day: "numeric" })
-                        : "Todas las fechas";
-
-                    doc.setFontSize(18);
+                    // ── Encabezado PDF ──
+                    doc.setFillColor(102, 126, 234);
+                    doc.rect(0, 0, 210, 32, "F");
+                    doc.setFontSize(20);
                     doc.setFont("helvetica", "bold");
-                    doc.text("PACHA SUNSET - Reporte de Pedidos", 14, 16);
-                    doc.setFontSize(12);
+                    doc.setTextColor(255, 255, 255);
+                    doc.text("PACHA SUNSET", 105, 13, { align: "center" });
+                    doc.setFontSize(10);
                     doc.setFont("helvetica", "normal");
-                    doc.setTextColor(100);
-                    doc.text("Fecha: " + fechaLeg, 14, 24);
-                    doc.setTextColor(0);
+                    doc.text("Reporte de Consumos por Socio", 105, 22, { align: "center" });
+                    const fechasLeg = fechasArr.map(function(f) {
+                        return new Date(f + "T12:00:00").toLocaleDateString("es-BO", { day: "2-digit", month: "short", year: "numeric" });
+                    }).join("  ·  ");
+                    doc.text("Fechas: " + fechasLeg, 105, 29, { align: "center" });
 
-                    if (!data || data.length === 0) {
-                        doc.setFontSize(13);
-                        doc.text("No hay pedidos para esta fecha.", 14, 40);
-                        doc.save("pedidos_" + (fechaFiltro || "todos") + ".pdf");
-                        return;
+                    let startY = 38;
+                    let grandTotal = 0;
+
+                    RPT_TARGET.forEach(function(userName) {
+                        const userOrders = allData.filter(function(r) { return r.usuario_nombre === userName; });
+                        let userTotal = 0;
+                        const rows = [];
+
+                        userOrders.forEach(function(res) {
+                            const fechaStr = new Date(res.fecha).toLocaleDateString("es-BO", { day: "2-digit", month: "2-digit" });
+                            if (Array.isArray(res.productos)) {
+                                res.productos.forEach(function(p) {
+                                    const subtotal = parseFloat(p.cantidad) * parseFloat(p.precio);
+                                    userTotal += subtotal;
+                                    rows.push([
+                                        fechaStr,
+                                        p.nombre,
+                                        p.cantidad,
+                                        "Bs " + parseFloat(p.precio).toFixed(2),
+                                        "Bs " + subtotal.toFixed(2)
+                                    ]);
+                                });
+                            }
+                        });
+
+                        grandTotal += userTotal;
+
+                        if (startY > 245) { doc.addPage(); startY = 16; }
+
+                        doc.autoTable({
+                            head: [
+                                [{ content: userName.toUpperCase(), colSpan: 5,
+                                   styles: { fillColor: [40, 44, 80], textColor: [255,255,255], fontStyle: "bold", fontSize: 12, halign: "center" } }],
+                                ["Fecha", "Producto", "Cant.", "Precio", "Total"]
+                            ],
+                            body: rows.length > 0 ? rows : [["—", "Sin pedidos en las fechas seleccionadas", "", "", "Bs 0.00"]],
+                            startY: startY,
+                            styles: { fontSize: 10, cellPadding: 3, font: "helvetica" },
+                            headStyles: { fillColor: [70, 78, 120], textColor: [255,255,255], fontStyle: "bold", fontSize: 10 },
+                            columnStyles: {
+                                0: { cellWidth: 20, halign: "center" },
+                                1: { cellWidth: 82 },
+                                2: { cellWidth: 15, halign: "center" },
+                                3: { cellWidth: 28, halign: "right" },
+                                4: { cellWidth: 28, halign: "right" }
+                            },
+                            foot: [["", "", "", "TOTAL " + userName.split(" ")[0].toUpperCase() + ":", "Bs " + userTotal.toFixed(2)]],
+                            footStyles: { fillColor: [30, 34, 60], textColor: [200, 210, 255], fontStyle: "bold", fontSize: 11 },
+                            alternateRowStyles: { fillColor: [245, 245, 255] },
+                            showFoot: "lastPage",
+                            margin: { left: 14, right: 14 }
+                        });
+
+                        startY = doc.lastAutoTable.finalY + 10;
+                    });
+
+                    // ── Total General ──
+                    if (startY > 255) { doc.addPage(); startY = 16; }
+                    doc.setFillColor(102, 126, 234);
+                    doc.roundedRect(14, startY, 182, 16, 4, 4, "F");
+                    doc.setFontSize(13);
+                    doc.setFont("helvetica", "bold");
+                    doc.setTextColor(255, 255, 255);
+                    doc.text("TOTAL GENERAL:  Bs " + grandTotal.toFixed(2), 105, startY + 11, { align: "center" });
+
+                    // Pie de página
+                    const pages = doc.internal.getNumberOfPages();
+                    for (let i = 1; i <= pages; i++) {
+                        doc.setPage(i);
+                        doc.setFontSize(8);
+                        doc.setFont("helvetica", "normal");
+                        doc.setTextColor(160, 160, 180);
+                        doc.text("Generado por PACHA SUNSET · Pág. " + i + " / " + pages, 105, 292, { align: "center" });
                     }
 
-                    let rows = [];
-                    let totalGeneral = 0;
+                    // Enviar al Service Worker con Content-Disposition: attachment → Safari descarga directo
+                    const fileName = "reporte-socios-" + fechasArr[0] + (fechasArr.length > 1 ? "_+" + (fechasArr.length - 1) + "fechas" : "") + ".pdf";
+                    const pdfBytes = doc.output("arraybuffer");
+                    if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+                        navigator.serviceWorker.controller.postMessage({ type: "store-pdf", bytes: pdfBytes, filename: fileName });
+                        setTimeout(function() { window.location.href = "/download-pdf"; }, 120);
+                    } else {
+                        // Fallback si el SW aún no está activo: navegar a blob
+                        const blob = new Blob([pdfBytes], { type: "application/octet-stream" });
+                        const blobUrl = URL.createObjectURL(blob);
+                        const a = document.createElement("a");
+                        a.href = blobUrl;
+                        a.download = fileName;
+                        a.style.display = "none";
+                        document.body.appendChild(a);
+                        a.click();
+                        setTimeout(function() { document.body.removeChild(a); URL.revokeObjectURL(blobUrl); }, 2000);
+                    }
 
-                    data.forEach(function(res) {
-                        const fecha = new Date(res.fecha);
-                        const hora = fecha.toLocaleTimeString("es-BO", { hour: "2-digit", minute: "2-digit" });
-                        res.productos.forEach(function(p) {
-                            const subtotal = p.cantidad * p.precio;
-                            totalGeneral += subtotal;
-                            rows.push([
-                                res.usuario_nombre,
-                                res.mesero || "—",
-                                hora,
-                                p.nombre,
-                                p.cantidad,
-                                "Bs " + parseFloat(p.precio).toFixed(2),
-                                "Bs " + parseFloat(subtotal).toFixed(2),
-                            ]);
-                        });
-                    });
-                    doc.autoTable({
-                        head: [["Socio", "Mesero", "Hora", "Producto", "Cant.", "Precio", "Total"]],
-                        body: rows,
-                        startY: 30,
-                        showFoot: "lastPage",
-                        styles: {
-                            fontSize: 11,
-                            cellPadding: 4,
-                            valign: "middle",
-                            fontStyle: "bold",
-                        },
-                        headStyles: {
-                            fillColor: [102, 126, 234],
-                            fontSize: 12,
-                            fontStyle: "bold",
-                            halign: "center",
-                        },
-                        bodyStyles: {
-                            fontStyle: "bold",
-                        },
-                        columnStyles: {
-                            0: { cellWidth: 38 },
-                            1: { cellWidth: 33 },
-                            2: { cellWidth: 22, halign: "center" },
-                            3: { cellWidth: 55 },
-                            4: { cellWidth: 16, halign: "center" },
-                            5: { cellWidth: 26, halign: "right" },
-                            6: { cellWidth: 26, halign: "right" },
-                        },
-                        alternateRowStyles: { fillColor: [245, 245, 255] },
-                        foot: [["", "", "", "", "", "TOTAL GENERAL:", "Bs " + totalGeneral.toFixed(2)]],
-                        footStyles: {
-                            fillColor: [40, 40, 40],
-                            textColor: [255, 255, 255],
-                            fontStyle: "bold",
-                            fontSize: 13,
-                        },
-                    });
-
-                    doc.save("pedidos_" + (fechaFiltro || "todos") + ".pdf");
                 } catch (err) {
-                    console.error("Error PDF:", err);
+                    console.error("Error PDF socios:", err);
                     showErrorToast("Error al generar el PDF");
                 }
             }
